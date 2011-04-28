@@ -19,7 +19,7 @@ Ruby: Party- Marathon durch Österreich => http://www.vienna.at/ruby-party-marat
 => [...]
 =end
 
-require 'rubygems'
+require 'rubygems'  # shouldn't be necessary for Ruby 1.9
 require 'json'
 require 'net/http'
 
