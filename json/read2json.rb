@@ -15,8 +15,17 @@ theStuff = Array.new
 infile = File.new("crummy_input.txt", "r")
 while (line = infile.gets)
   # read file contents into a hash... er, an array... ?
-  theStuff << line.split(':')
+  if line.include? ':'
+    verbiage = Hash.new
+    thisKey, thisVal = line.split(':')
+    verbiage[thisKey.strip] = thisVal.strip
+    theStuff << verbiage
+  elsif (line.chomp != "")
+    theStuff << line.chomp
+  end
 end
 infile.close
 
-puts theStuff
+jout = JSON.pretty_generate theStuff
+
+puts jout
