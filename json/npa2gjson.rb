@@ -22,6 +22,10 @@ while (line = infile.gets) do
     :city   => dataBits[7]
   }
   puts aPlace[:city]
+  str = "#{dataBits[3]}"
+  puts str
+  str1 = "{\"type\": \"Point\", \"coordinates\": #{dataBits[3]} }"
+  puts str1
 end
 
 infile.close
