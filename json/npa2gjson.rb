@@ -19,13 +19,20 @@ while (line = infile.gets) do
     :long   => dataBits[4].to_f,
     :wire   => dataBits[5],
     :state  => dataBits[6],
-    :city   => dataBits[7]
+    :city   => dataBits[7].split.join('-')  # Evidently RGeo or GeoJSON doesn't like spaces...
   }
-  puts aPlace[:city]
-  str = "#{dataBits[3]}"
+  pointStr = "{\"type\": \"Point\", \"coordinates\": [#{aPlace[:lat]}, #{aPlace[:long]}]}"
+  propStr  = "{"
+  propStr += "\"npanxx\":\"#{aPlace[:npanxx]}\"" + ", "
+  propStr += "\"state\":\"#{aPlace[:state]}\"" + ", "
+  propStr += "\"city\":\"#{aPlace[:city]}\"" + ", "
+  propStr += "\"use\":\"#{aPlace[:wire]}\""
+  propStr += "}"
+  str      = "{\"type\": \"Feature\", \"geometry\":#{pointStr}, \"properties\":#{propStr} }"
   puts str
-  str1 = "{\"type\": \"Point\", \"coordinates\": #{dataBits[3]} }"
-  puts str1
+  feature = RGeo::GeoJSON.decode(str, :json_parser => :json)
+  puts feature["npanxx"]
+  puts feature.geometry.as_text
 end
 
 infile.close
