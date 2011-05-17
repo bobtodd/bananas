@@ -1,2 +1,0 @@
-{"type"=>"Feature", "geometry"=>{"type"=>"Point", "coordinates"=>[-74.006393, 40.714172]}, "properties"=>{"name"=>"New York City", "description"=>"New York City"}, "id"=>1}
-{"type"=>"Feature", "geometry"=>{"type"=>"Point", "coordinates"=>[-97.7427778, 30.2669444]}, "properties"=>{"name"=>"Austin", "description"=>"Live Music Capital of the World!"}, "id"=>2}
