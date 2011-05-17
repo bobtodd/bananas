@@ -11,8 +11,8 @@ require 'open-uri'
 
 url   = 'http://www.wcisd.hpc.mil/~phil/npanxx/npanxx99.txt'
 ifile = open(url)
-# ifile = open('npanxx.txt', 'r')
-ofile = File.open('npanxx_out.txt', 'w')
+# ifile = open('../tmp/npanxx.txt', 'r')
+ofile = File.open('../tmp/npanxx_out.txt', 'w')
 
 # We want GeoJSON to know that our coordinates are [Long, Lat]
 geofactory = RGeo::Geographic.spherical_factory

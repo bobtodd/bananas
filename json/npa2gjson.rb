@@ -9,7 +9,7 @@
 require 'rubygems'
 require 'rgeo/geo_json'
 
-infile = File.new("npanxx.txt", "r")
+infile = File.new("../tmp/npanxx.txt", "r")
 
 # We want GeoJSON to know that our coordinates are [Long, Lat]
 geofactory = RGeo::Geographic.spherical_factory

@@ -12,7 +12,7 @@ require 'json'
 
 theStuff = Array.new
 
-infile = File.new("crummy_input.txt", "r")
+infile = File.new("../tmp/crummy_input.txt", "r")
 while (line = infile.gets)
   # read file contents into a hash... er, an array... ?
   if line.include? ':'
