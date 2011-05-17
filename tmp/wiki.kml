@@ -8,5 +8,12 @@
     <coordinates>-74.006393,40.714172,0</coordinates>
   </Point>
 </Placemark>
+<Placemark>
+  <name>Austin</name>
+  <description>Live Music Capital of the World!</description>
+  <Point>
+    <coordinates>-97.7427778,30.2669444,0</coordinates>
+  </Point>
+</Placemark>
 </Document>
 </kml>

@@ -10,11 +10,12 @@ geofactory = RGeo::Geographic.spherical_factory
 # For reference algorithm see
 #    http://snippets.dzone.com/posts/show/1765
 #
-kmlroot = (Document.new File.new "wiki.kml").root
+kmlroot = (Document.new File.new "../tmp/wiki.kml").root
 nodes   = kmlroot.elements.to_a("//Placemark")
 
 begin
   id = 1
+  ofile = File.open("../tmp/k2g_output.txt", "w")
   nodes.each { |node|
     name        = node.elements["name"].text
     description = node.elements["description"].text
@@ -23,7 +24,9 @@ begin
     props       = {"name" => name, "description" => description}
     loc_feat    = RGeo::GeoJSON::Feature.new(locale, id, props)
     loc_hash    = RGeo::GeoJSON.encode(loc_feat, :json_parser => :json, :geo_factory => geofactory)
-    puts loc_hash
+    ofile << loc_hash << "\n"
     id += 1
   }
+ensure
+  ofile.close
 end
