@@ -16,7 +16,7 @@ nodes   = kmlroot.elements.to_a("//Placemark")
 begin
   id = 1
   ofile = File.open("../tmp/k2g_output.txt", "w")
-  nodes.each { |node|
+  nodes.each do |node|
     name        = node.elements["name"].text
     description = node.elements["description"].text
     coords      = node.elements["Point"].elements["coordinates"].text.split(",")
@@ -26,7 +26,7 @@ begin
     loc_hash    = RGeo::GeoJSON.encode(loc_feat, :json_parser => :json, :geo_factory => geofactory)
     ofile << loc_hash << "\n"
     id += 1
-  }
+  end
 ensure
   ofile.close
 end
