@@ -11,8 +11,16 @@ def create_geo_json input_node
     coordlst = []
     coordstr.split.each{ |triple| coordlst << triple.split(',') }
     coords = coordlst
+    for i in 1..coords.length
+      for j in 1..coords[i-1].length
+        coords[i-1][j-1] = coords[i-1][j-1].to_f
+      end
+    end
   else
     coords = coordstr.split(',')
+    for i in 1..coords.length
+      coords[i-1] = coords[i-1].to_f
+    end
   end
   {
     :type => 'Feature',
