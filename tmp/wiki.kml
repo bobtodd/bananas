@@ -1,19 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
 <Document>
-<Placemark>
-  <name>New York City</name>
-  <description>New York City</description>
-  <Point>
-    <coordinates>-74.006393,40.714172,0</coordinates>
-  </Point>
-</Placemark>
-<Placemark>
-  <name>Austin</name>
-  <description>Live Music Capital of the World!</description>
-  <Point>
-    <coordinates>-97.7427778,30.2669444,0</coordinates>
-  </Point>
-</Placemark>
+  <Placemark>
+    <name>New York City</name>
+    <description>New York City</description>
+    <Point>
+      <coordinates>-74.006393,40.714172,0</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Austin</name>
+    <description>Live Music Capital of the World!</description>
+    <Point>
+      <coordinates>-97.7427778,30.2669444,0</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>unextruded</name>
+    <LineString>
+      <extrude>1</extrude>
+      <tessellate>1</tessellate>
+      <coordinates>
+        -122.364383,37.824664,0 -122.364152,37.824322,0 
+      </coordinates>
+    </LineString>
+  </Placemark>
+  <Placemark>
+    <name>extruded</name>
+    <LineString>
+      <extrude>1</extrude>
+      <tessellate>1</tessellate>
+      <altitudeMode>relativeToGround</altitudeMode>
+      <coordinates>
+        -122.364167,37.824787,50 -122.363917,37.824423,50 
+      </coordinates>
+    </LineString>
+  </Placemark>
 </Document>
 </kml>

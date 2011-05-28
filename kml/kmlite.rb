@@ -126,7 +126,7 @@ class Placemark
     description = (descr = str.match(/<description>(.+?)<\/description>/)) ? descr[1] : nil
 
     if data = str.match(/<Polygon>(.+?)<\/Polygon>/m)
-      # for <Polygon>...</Polygon> pairs, create a LinearRing
+      # for <Polygon>...</Polygon> pairs, create a Polygon
       geo_type   = "Polygon"
       geo_object = Polygon.new(data[1])
     elsif data = str.match(/<LinearRing>(.+?)<\/LinearRing>/m)

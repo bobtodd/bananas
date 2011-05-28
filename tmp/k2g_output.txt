@@ -1,0 +1,1 @@
+{"type"=>"Feature", "geometry"=>{"type"=>"Point", "coordinates"=>[-74.006393, 40.714172]}, "properties"=>{"name"=>"New York City", "description"=>"New York City"}, "id"=>1}

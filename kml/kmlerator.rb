@@ -30,8 +30,7 @@ def create_geo_json input_node
     },
     :properties => {
       :name => input_node.elements['name'].text,
-      #:location_desc => input_node.elements['description'].text,
-      :info => input_node.elements.reject { |key, val| key == 'name' || key = 'description' }
+      :info => input_node.elements.reject { |key, val| key == 'name' }
     }
   }.to_json
 end
