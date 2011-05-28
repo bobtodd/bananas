@@ -3,6 +3,8 @@
 # Classes for handling a KML file a little
 # more easily.
 
+require 'json'
+
 class Point
   attr_accessor :x, :y, :z
 
@@ -16,6 +18,8 @@ class Point
   end
 
   def coords(str)
+    # get everything between <coordinates>...</coordinates> pairs
+    # and split over commas
     data = str.match(/<coordinates>(.+)<\/coordinates>/)
     triple = []
     if data[1] != nil
@@ -49,6 +53,9 @@ class LineString
   end
 
   def scour(str)
+    # get everything between <coordinates>...</coordinates> pairs
+    # different points are separated by spaces: use string#split
+    # coordinates of each point are separated by commas: split(',')
     points = []
     pt_str = str.match(/<coordinates>(.+?)<\/coordinates>/m)[1].split
     pt_str.each{ |item| points << Point.new("<coordinates>" + item + "<\/coordinates>") }
@@ -58,6 +65,8 @@ end
 
 class LinearRing < LineString
   # a LineString that closes on itself
+  # ... since there's no point saving a point twice,
+  # this is formally identical to a LineString
 end
 
 class Polygon
@@ -73,6 +82,20 @@ class Placemark
     @name, @description, @geo_type, @geo_object = scour(str)
   end
 
+  def to_json
+    {
+      :type => 'Feature',
+      :geometry => {
+        :type => @geo_type,
+        :coordinates => @geo_object.to_s
+      },
+      :properties => {
+        :name => @name,
+        :description => (@description == nil) ? "" : @description
+      }
+    }.to_json
+  end
+
   def scour(str)
     name        = (nm = str.match(/<name>(.+?)<\/name>/)) ? nm[1] : nil
     description = (descr = str.match(/<description>(.+?)<\/description>/)) ? descr[1] : nil
@@ -80,12 +103,16 @@ class Placemark
     if data = str.match(/<Point>(.+?)<\/Point>/m)
       # for <Point>...</Point> pairs, create a Point
       # by passing Point.new the string contained in between
-      geo_type   = :point
+      geo_type   = "Point"
       geo_object = Point.new(data[1])
     elsif data = str.match(/<LineString>(.+?)<\/LineString>/m)
       # for <LineString>...</LineString> pairs, create a LineString
-      geo_type   = :line_string
+      geo_type   = "LineString"
       geo_object = LineString.new(data[1])
+    elsif data = str.match(/<LinearRing>(.+?)<\/LinearRing>/m)
+      # for <LinearRing>...</LinearRing> pairs, create a LinearRing
+      geo_type   = "LinearRing"
+      geo_object = LinearRing.new(data[1])
     else
       geo_type   = nil
       geo_object = nil
@@ -107,6 +134,16 @@ class KMLdoc
     str         = File.open(filename, "r") { |ifile| ifile.read }
     result      = str.match(/<Document>(.*)<\/Document>/m)[1] # use 'm' for multiple lines
     @placemarks = scour(result)
+  end
+
+  def to_json(filename=nil)
+    if filename
+      ofile = File.open(filename, "w")
+      @placemarks.each{ |place| ofile.puts place.to_json }
+      ofile.close
+    else
+      @placemarks.each{ |place| puts place.to_json }
+    end
   end
 
   def scour(str)

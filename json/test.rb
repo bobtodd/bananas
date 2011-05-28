@@ -6,4 +6,5 @@ require './kmlite'
 
 kdoc = KMLdoc.new(ARGV[0])
 
-puts kdoc.placemarks.to_s
+# kdoc.to_json('quicktest.txt')
+kdoc.to_json
