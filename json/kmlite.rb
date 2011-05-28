@@ -73,6 +73,31 @@ class Polygon
   # a shape contained between inner and outer LinearRings
   # the inner LinearRing may be nil
   attr_accessor :outer, :inner
+
+  def initialize(str)
+    @outer, @inner = scour(str)
+  end
+
+  def to_s
+    str  = '[' + @outer.to_s
+    str += (@inner != nil) ? ', ' + @inner.to_s : ''
+    str += ']'
+    return str
+  end
+
+  def scour(str)
+    if data = str.match(/<outerBoundaryIs>(.+?)<\/outerBoundaryIs>/m)
+      outer = LinearRing.new(data[1])
+    else
+      outer = nil
+    end
+    if data = str.match(/<innerBoundaryIs>(.+?)<\/innerBoundaryIs>/m)
+      inner = LinearRing.new(data[1])
+    else
+      inner = nil
+    end
+    return outer, inner
+  end
 end
 
 class Placemark
@@ -100,19 +125,23 @@ class Placemark
     name        = (nm = str.match(/<name>(.+?)<\/name>/)) ? nm[1] : nil
     description = (descr = str.match(/<description>(.+?)<\/description>/)) ? descr[1] : nil
 
-    if data = str.match(/<Point>(.+?)<\/Point>/m)
-      # for <Point>...</Point> pairs, create a Point
-      # by passing Point.new the string contained in between
-      geo_type   = "Point"
-      geo_object = Point.new(data[1])
-    elsif data = str.match(/<LineString>(.+?)<\/LineString>/m)
-      # for <LineString>...</LineString> pairs, create a LineString
-      geo_type   = "LineString"
-      geo_object = LineString.new(data[1])
+    if data = str.match(/<Polygon>(.+?)<\/Polygon>/m)
+      # for <Polygon>...</Polygon> pairs, create a LinearRing
+      geo_type   = "Polygon"
+      geo_object = Polygon.new(data[1])
     elsif data = str.match(/<LinearRing>(.+?)<\/LinearRing>/m)
       # for <LinearRing>...</LinearRing> pairs, create a LinearRing
       geo_type   = "LinearRing"
       geo_object = LinearRing.new(data[1])
+    elsif data = str.match(/<LineString>(.+?)<\/LineString>/m)
+      # for <LineString>...</LineString> pairs, create a LineString
+      geo_type   = "LineString"
+      geo_object = LineString.new(data[1])
+    elsif data = str.match(/<Point>(.+?)<\/Point>/m)
+      # for <Point>...</Point> pairs, create a Point
+      # by passing Point.new the string contained in between
+      geo_type   = "Point"
+      geo_object = Point.new(data[1])
     else
       geo_type   = nil
       geo_object = nil
