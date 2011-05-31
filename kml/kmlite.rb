@@ -24,9 +24,12 @@ class Point
     triple = []
     if data[1] != nil
       coords = data[1].split(',')
-      triple << coords[0].to_f
-      triple << coords[1].to_f
-      triple << coords[2] != nil ? coords[2].to_f : 0.0
+      x = coords[0].to_f
+      y = coords[1].to_f
+      z = coords[2] == nil ? 0.0 : coords[2].to_f
+      triple << x
+      triple << y
+      triple << z
     else
       puts "No coordinates for Point"
       3.times do

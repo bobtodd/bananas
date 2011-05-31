@@ -26,7 +26,7 @@ count = 0
 total_count = 0
 while (line = ifile.gets) do
   total_count += 1
-  if line =~ /United States/
+  if line =~ /America/  # e.g. Chicago is listed as America/Chicago
     ofile.puts line
     count += 1
   elsif !ifile.gets

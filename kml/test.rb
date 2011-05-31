@@ -4,7 +4,11 @@
 
 require './kmlite'
 
-kdoc = KMLdoc.new(ARGV[0])
+infilename  = ARGV[0]
+outfilename = ARGV[1] # if nil, output will be to stdout
 
-# kdoc.to_json('quicktest.txt')
-kdoc.to_json
+# create KMLdoc object
+kdoc = KMLdoc.new(infilename)
+
+# GeoJSONerize it!
+kdoc.to_json(outfilename)
