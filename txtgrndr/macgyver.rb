@@ -1,51 +1,104 @@
 #!/usr/bin/env ruby
 
 # A short script to run textgrounder MacGyver-style
-# on low memory
+# using low memory
 
-# Usage:
-# ./macgyver number file_from_which_to_extract_lines.txt
+require 'optparse'
 
-# read in a number of lines to extract
-# and a file to extract them from
+# Use OptionsParser to read command-line options
+options = {}
 
-number      = ARGV[0].to_i
-ifile       = File.open(ARGV[1], "r")
-base        = File.basename(ARGV[1], File.extname(ARGV[1]))
-ext         = File.extname(ARGV[1])
-outfilename = base + "_head"
+optparse = OptionParser.new do |opts|
+  # Banner: displayed at top of help screen
+  opts.banner = "Usage: macgyver.rb [options] infile"
+  
+  # Define options
+  options[:country] = ""
+  opts.on('-c', '--country [OPT]', "Country for data extraction") do |country|
+    options[:country] = country || "US"
+  end
+
+  options[:random] = false
+  opts.on('-r', '--random [N]', "Extract lines at random, up to a certain number") do |number|
+    options[:random] = number.to_i || 10000
+  end
+
+  options[:outdir] = false
+  opts.on('-d', '--directory DIR', "Directory for output") do |dir|
+    options[:outdir] = dir
+  end
+
+  options[:source] = "pg4546.txt"
+  opts.on('-s', '--source FILE', "Text file to parse") do |filename|
+    options[:source] = filename
+  end
+
+  # The help screen
+  opts.on('-h', '--help', 'Help display') do 
+    puts opts
+    exit
+  end
+end
+
+# Parse the command line
+# use "!" to have OptionsParser remove the entries in ARGV
+# pertaining to options and their parameters
+optparse.parse!
+
+# get file with geographic info
+# get the directory, filename, extension
+infilename  = ARGV[0]
+ifile       = File.open(infilename, "r")
+base        = File.basename(infilename, File.extname(infilename))
+ext         = File.extname(infilename)
+dir         = options[:outdir] ? options[:outdir] : File.dirname(infilename)
+
+# create file with extracted geographic info
+suffix      = options[:country] ? "_" + options[:country] : ""
+outfilename = dir + "/" + base + suffix
 ofile       = File.open(outfilename + ext, "w")
+
+# get path for textgrounder
 tgpath      = ENV['TEXTGROUNDER_DIR']
 
-# put "number" lines in a new file
-# but let's make it a random sample of "number" lines
-puts "Getting random sample of #{number} lines..."
+puts "Extracting lines with geographic data..."
+puts "Country: #{options[:country]}"
+
 count = 0
 total_count = 0
-while (count < number) do
-  random = rand(2)
+while (line = ifile.gets) do
   total_count += 1
-  if random == 1
-    ofile.puts ifile.gets
+  if options[:random] && (count < options[:random])
+    random = rand(2)
+    if random == 1
+      ofile.puts line
+      count += 1
+    end
+  elsif line =~ Regexp.new(options[:country])
+    ofile.puts line
     count += 1
   elsif !ifile.gets
     break
   end
 end
 
-puts "#{count} lines read out of #{total_count} iterations..."
+puts "#{count} lines extracted out of #{total_count}...\n"
 
 
 # zip the file
+puts "Zipping geographic data file for processing...\n"
 zipit = `zip #{outfilename}.zip #{outfilename}.txt`
 
 # Now follow the textgrounder Getting Started instructions
 # beginning with
 # Step 7: Import GeoNames gazetteer
-puts %x[#{tgpath}/bin/textgrounder 4 import-gazetteer -i #{outfilename}.zip -o geonames_head.ser.gz -dkm 2>&1].inspect
+puts "Importing GeoNames gazetteer...\n"
+puts %x[#{tgpath}/bin/textgrounder 4 import-gazetteer -i #{outfilename}.zip -o #{dir}/geonames#{suffix}.ser.gz -dkm 2>&1].inspect
 
 # Step 9: preprocess the corpus
-puts %x[#{tgpath}/bin/textgrounder 4 import-corpus -i pg4546.txt -sg geonames_head.ser.gz -sco corpus_head.ser.gz 2>&1].inspect
+puts "Preprocessing the corpus...\n"
+puts %x[#{tgpath}/bin/textgrounder 4 import-corpus -i #{options[:source]} -sg #{dir}/geonames#{suffix}.ser.gz -sco #{dir}/corpus#{suffix}.ser.gz 2>&1].inspect
 
 # Step 10: detect and resolve toponyms
-puts %x[#{tgpath}/bin/textgrounder 2 resolve -sci corpus_head.ser.gz -r BasicMinDistResolver -o widger_head.xml -ok widger_head.kml -sco resolved-corpus_head.ser.gz -sg ../data/gazetteers/geonames.ser.gz 2>&1].inspect
+puts "Detecting and resolving toponyms...\n"
+puts %x[#{tgpath}/bin/textgrounder 2 resolve -sci #{dir}/corpus#{suffix}.ser.gz -r BasicMinDistResolver -o #{dir}/widger#{suffix}.xml -ok #{dir}/widger#{suffix}.kml -sco #{dir}/resolved-corpus#{suffix}.ser.gz -sg #{dir}/geonames#{suffix}.ser.gz 2>&1].inspect
