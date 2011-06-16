@@ -30,6 +30,16 @@ optparse = OptionParser.new do |opts|
     options[:memory] = number.to_i
   end
 
+  options[:resolver] = "BasicMinDistResolver"
+  opts.on('-r', '--resolver RES', "Type of algorithm for resolving toponyms") do |resolver|
+    options[:resolver] = resolver
+  end
+
+  options[:iterations] = ""
+  opts.on('-i', '--iterations [N]', "Number of iterations for a Weighted Minimum Distance algorithm") do |n|
+    options[:iterations] = n.to_i || 10
+  end
+
   options[:outdir] = false
   opts.on('-d', '--directory DIR', "Directory for output") do |dir|
     options[:outdir] = dir
@@ -65,6 +75,9 @@ optparse.parse!
 # get path for textgrounder
 tgpath      = ENV['TEXTGROUNDER_DIR']
 datapath    = tgpath.chomp('/') + "/data/gazetteers/"
+resolver    = options[:resolver] == ("WeightedMinDistResolver" || "wmd" || "WMD") ? \
+                "WeightedMinDistResolver" : "BasicMinDistResolver"
+iters       = options[:iterations] == "" ? options[:iterations] : "-it #{options[:iterations]}"
 
 # get file with geographic info
 # get the directory, filename, extension
@@ -76,6 +89,8 @@ gsfx        = options[:country] ? "_" + options[:country] : ""
 
 dir         = options[:outdir] ? options[:outdir].chomp('/') : File.dirname(srcfilename)
 
+# Now that OptionsParser has popped off the other elements of ARGV,
+# we can write...
 srcfilename = ARGV[0]
 
 if options[:web]
@@ -86,6 +101,7 @@ if options[:web]
   wfile       = File.open(webfilename, "w")
 
   # just output text between <p>...</p> tags in webpage
+  # Thanks to Nokogiri, this is easy
   wbpg.xpath("//p").each do |paragraph|
     wfile.puts paragraph
   end
@@ -141,4 +157,4 @@ puts %x[#{tgpath}/bin/textgrounder #{options[:memory]} import-corpus -i #{srcfil
 
 # Step 10: detect and resolve toponyms
 puts "\nDetecting and resolving toponyms...\n"
-puts %x[#{tgpath}/bin/textgrounder #{options[:memory]/2} resolve -sci #{dir}/corpus#{gsfx}.ser.gz -r BasicMinDistResolver -o #{dir}/#{options[:output]}#{gsfx}.xml -ok #{dir}/#{options[:output]}#{gsfx}.kml -sco #{dir}/resolved-corpus#{gsfx}.ser.gz -sg #{dir}/geonames#{gsfx}.ser.gz 2>&1].inspect
+puts %x[#{tgpath}/bin/textgrounder #{options[:memory]/2} resolve -sci #{dir}/corpus#{gsfx}.ser.gz -r #{resolver} #{iters} -o #{dir}/#{options[:output]}#{gsfx}.xml -ok #{dir}/#{options[:output]}#{gsfx}.kml -sco #{dir}/resolved-corpus#{gsfx}.ser.gz -sg #{dir}/geonames#{gsfx}.ser.gz 2>&1].inspect
