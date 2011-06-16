@@ -25,9 +25,19 @@ optparse = OptionParser.new do |opts|
     options[:random] = number.to_i || 10000
   end
 
+  options[:memory] = 4
+  opts.on('-m', '--memory N', "Amount of memory (in GB) to use for processing") do |number|
+    options[:memory] = number.to_i
+  end
+
   options[:outdir] = false
   opts.on('-d', '--directory DIR', "Directory for output") do |dir|
     options[:outdir] = dir
+  end
+
+  options[:output] = "widger"
+  opts.on('-o', '--output NAME', "Filename for KML output file") do |filename|
+    options[:output] = filename
   end
 
   options[:geo] = ""
@@ -123,12 +133,12 @@ zipit = `zip #{ogfilename}.zip #{ogfilename}.txt`
 # beginning with
 # Step 7: Import GeoNames gazetteer
 puts "\nImporting GeoNames gazetteer...\n"
-puts %x[#{tgpath}/bin/textgrounder 4 import-gazetteer -i #{ogfilename}.zip -o #{dir}/geonames#{gsfx}.ser.gz -dkm 2>&1].inspect
+puts %x[#{tgpath}/bin/textgrounder #{options[:memory]} import-gazetteer -i #{ogfilename}.zip -o #{dir}/geonames#{gsfx}.ser.gz -dkm 2>&1].inspect
 
 # Step 9: preprocess the corpus
 puts "\nPreprocessing the corpus...\n"
-puts %x[#{tgpath}/bin/textgrounder 4 import-corpus -i #{srcfilename} -sg #{dir}/geonames#{gsfx}.ser.gz -sco #{dir}/corpus#{gsfx}.ser.gz 2>&1].inspect
+puts %x[#{tgpath}/bin/textgrounder #{options[:memory]} import-corpus -i #{srcfilename} -sg #{dir}/geonames#{gsfx}.ser.gz -sco #{dir}/corpus#{gsfx}.ser.gz 2>&1].inspect
 
 # Step 10: detect and resolve toponyms
 puts "\nDetecting and resolving toponyms...\n"
-puts %x[#{tgpath}/bin/textgrounder 2 resolve -sci #{dir}/corpus#{gsfx}.ser.gz -r BasicMinDistResolver -o #{dir}/widger#{gsfx}.xml -ok #{dir}/widger#{gsfx}.kml -sco #{dir}/resolved-corpus#{gsfx}.ser.gz -sg #{dir}/geonames#{gsfx}.ser.gz 2>&1].inspect
+puts %x[#{tgpath}/bin/textgrounder #{options[:memory]/2} resolve -sci #{dir}/corpus#{gsfx}.ser.gz -r BasicMinDistResolver -o #{dir}/#{options[:output]}#{gsfx}.xml -ok #{dir}/#{options[:output]}#{gsfx}.kml -sco #{dir}/resolved-corpus#{gsfx}.ser.gz -sg #{dir}/geonames#{gsfx}.ser.gz 2>&1].inspect
