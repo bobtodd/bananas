@@ -20,6 +20,11 @@ optparse = OptionParser.new do |opts|
     options[:country] = country || "US"
   end
 
+  options[:parse] = "//p"
+  opts.on('-p', '--parse HTML', "Input string for Nokogiri's xpath() to parse HTML file") do |html|
+    options[:parse] = html
+  end
+
   options[:random] = false
   opts.on('-r', '--random [N]', "Extract lines at random, up to a certain number") do |number|
     options[:random] = number.to_i || 10000
@@ -102,7 +107,8 @@ if options[:web]
 
   # just output text between <p>...</p> tags in webpage
   # Thanks to Nokogiri, this is easy
-  wbpg.xpath("//p").each do |paragraph|
+  xmlpath = "#{options[:parse]}"
+  wbpg.xpath(xmlpath).each do |paragraph|
     wfile.puts paragraph
   end
 
