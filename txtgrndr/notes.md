@@ -46,6 +46,7 @@ There are two basic places where issues can arise that can lead to [textgrounder
     * At least in [CandidateList.java][cl], [textgrounder][tg] seems to employ _physical distance_ (determined from the coordinates) as part of the algorithm.  If this actually factors heavily into the algorithm that ultimately determines what geolocation is being referenced, this might cause problems:
         * For example, though I know of and fully support the existence of Paris, Texas, when I say "Paris" I almost never refer to the Texas town, even though it's closer geographically.
             * Of course I suspect [textgrounder][tg]'s designers already thought of this; but I don't yet know how they get around it.
+        * In particular there needs to be a way to distinguish names that are, simply, _popular_.  When "Alaska" occurs in an almost context-free setting (with no other geographical qualification), the default needs to be to the "most popular" use of "Alaska".  I.e., the _default_ must be that this refers to the northernmost region of the United States, and [Alaska, NM][anm] must _at most_ be a secondary option.
 
 
 To-dos
@@ -74,3 +75,4 @@ Some of the above issues may have more to do with how I prepared the text to be 
 [cl]: http://code.google.com/p/textgrounder/source/browse/src/main/java/opennlp/textgrounder/topo/gaz/CandidateList.java "CandidateList.java"
 [gng]: http://code.google.com/p/textgrounder/source/browse/src/main/java/opennlp/textgrounder/topo/gaz/GeoNamesGazetteer.java "textgrounder file GeoNamesGazetteer.java"
 [gngl]: http://code.google.com/p/textgrounder/source/browse/src/main/java/opennlp/textgrounder/topo/gaz/GeoNamesGazetteerWithList.java "textgrounder file GeoNamesGazetteerWithList.java"
+[anm]: http://www.google.com/maphp?hl=en&tab=wl&q=alaska%2C%20new%20mexico "Alaska, New Mexico"
