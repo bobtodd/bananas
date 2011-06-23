@@ -37,14 +37,15 @@ So upon unleashing [this beast][tg] upon my unsuspecting [text][test], I receive
 Observations on textgrounder's Source Code
 ------------------------------------------
 
-There are two basic places issues can arise that can lead to [textgrounder][tg] going awry: the code itself, obviously, and the geographic database the user feeds it.  There are a couple issues that should be kept in mind when evaluating the above results:
+There are two basic places where issues can arise that can lead to [textgrounder][tg] going awry: the code itself, obviously, and the geographic database the user feeds it.  There are a couple issues that should be kept in mind when evaluating the above results:
 
 * Database
-    * The example databases for US geographical outlined in the [getting started][gs] guide have no column headers: so it's a little difficult to figure out how to add more refined data in a way that [textgrounder][tg] can read and employ to enhance performance.
+    * The example databases for US geographical entities outlined in the [getting started][gs] guide have no column headers: so it's a little difficult to figure out how to add more refined data in a way that [textgrounder][tg] can read and employ to enhance performance.
 
 * Source code
     * At least in [CandidateList.java][cl], [textgrounder][tg] seems to employ _physical distance_ (determined from the coordinates) as part of the algorithm.  If this actually factors heavily into the algorithm thatultimately determines what geolocation is being referenced, this might cause problems:
         * For example, though I know of and fully support the existence of Paris, Texas, when I say "Paris" I almost never refer to the Texas town, even though it's closer geographically.
+            * Of course I suspect [textgrounder][tg]'s designers already thought of this; but I don't yet know how they get around it.
 
 
 To-dos
@@ -53,7 +54,11 @@ To-dos
 Some of the above issues may have more to do with how I prepared the text to be parsed than how [textgrounder][tg] functions.  So let's start a little list of stuff I have to check out:
 
 *  I'll need to run the program on the same website, but trying this time to keep paragraph headers (i.e. entities not included in `<p> ... </p>` pairs), to see if the titles help improve performance.
-
+    * Actually, my code already keeps the headers, since they're within the `<p> ... </p>` tags;
+    * but they are surrounded by other HTML formatting elements, which might perhaps mess up [textgrounder][tg].
+        * Update 2011-06-21: No noticable improvement (in fact, arguably worse performance) switching Nokogiri's `xpath("//p")` to `xpath("//text()")` to extract text.
+* I need to figure out where in the code [textgrounder][tg] extracts items from the database to see if there's allowance made for different formats with more options.
+    * For example, does [textgrounder][tg] only recognize "Alaska" and "AK" as valid symbols for that state, or is it also picking up on "Alas."?  It seems like it doesn't recognize the latter.
 
 [tg]: http://code.google.com/p/textgrounder/ "textgrounder wiki"
 [pg]: http://www.gutenberg.org/wiki/Main_Page "Project Gutenberg homepage"

@@ -51,7 +51,7 @@ infilename  = ARGV[0]
 ifile       = File.open(infilename, "r")
 base        = File.basename(infilename, File.extname(infilename))
 ext         = File.extname(infilename)
-dir         = options[:outdir] ? options[:outdir] : File.dirname(infilename)
+dir         = options[:outdir] ? options[:outdir].chomp('/') : File.dirname(infilename)
 
 # create file with extracted geographic info
 suffix      = options[:country] ? "_" + options[:country] : ""
@@ -61,7 +61,7 @@ ofile       = File.open(outfilename + ext, "w")
 # get path for textgrounder
 tgpath      = ENV['TEXTGROUNDER_DIR']
 
-puts "Extracting lines with geographic data..."
+puts "\nExtracting lines with geographic data..."
 puts "Country: #{options[:country]}"
 
 count = 0
@@ -82,23 +82,23 @@ while (line = ifile.gets) do
   end
 end
 
-puts "#{count} lines extracted out of #{total_count}...\n"
+puts "\n#{count} lines extracted out of #{total_count}...\n"
 
 
 # zip the file
-puts "Zipping geographic data file for processing...\n"
+puts "\nZipping geographic data file for processing...\n"
 zipit = `zip #{outfilename}.zip #{outfilename}.txt`
 
 # Now follow the textgrounder Getting Started instructions
 # beginning with
 # Step 7: Import GeoNames gazetteer
-puts "Importing GeoNames gazetteer...\n"
+puts "\nImporting GeoNames gazetteer...\n"
 puts %x[#{tgpath}/bin/textgrounder 4 import-gazetteer -i #{outfilename}.zip -o #{dir}/geonames#{suffix}.ser.gz -dkm 2>&1].inspect
 
 # Step 9: preprocess the corpus
-puts "Preprocessing the corpus...\n"
+puts "\nPreprocessing the corpus...\n"
 puts %x[#{tgpath}/bin/textgrounder 4 import-corpus -i #{options[:source]} -sg #{dir}/geonames#{suffix}.ser.gz -sco #{dir}/corpus#{suffix}.ser.gz 2>&1].inspect
 
 # Step 10: detect and resolve toponyms
-puts "Detecting and resolving toponyms...\n"
+puts "\nDetecting and resolving toponyms...\n"
 puts %x[#{tgpath}/bin/textgrounder 2 resolve -sci #{dir}/corpus#{suffix}.ser.gz -r BasicMinDistResolver -o #{dir}/widger#{suffix}.xml -ok #{dir}/widger#{suffix}.kml -sco #{dir}/resolved-corpus#{suffix}.ser.gz -sg #{dir}/geonames#{suffix}.ser.gz 2>&1].inspect
