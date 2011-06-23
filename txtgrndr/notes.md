@@ -43,7 +43,7 @@ There are two basic places where issues can arise that can lead to [textgrounder
     * The example databases for US geographical entities outlined in the [getting started][gs] guide have no column headers: so it's a little difficult to figure out how to add more refined data in a way that [textgrounder][tg] can read and employ to enhance performance.
 
 * Source code
-    * At least in [CandidateList.java][cl], [textgrounder][tg] seems to employ _physical distance_ (determined from the coordinates) as part of the algorithm.  If this actually factors heavily into the algorithm thatultimately determines what geolocation is being referenced, this might cause problems:
+    * At least in [CandidateList.java][cl], [textgrounder][tg] seems to employ _physical distance_ (determined from the coordinates) as part of the algorithm.  If this actually factors heavily into the algorithm that ultimately determines what geolocation is being referenced, this might cause problems:
         * For example, though I know of and fully support the existence of Paris, Texas, when I say "Paris" I almost never refer to the Texas town, even though it's closer geographically.
             * Of course I suspect [textgrounder][tg]'s designers already thought of this; but I don't yet know how they get around it.
 
@@ -59,6 +59,7 @@ Some of the above issues may have more to do with how I prepared the text to be 
         * Update 2011-06-21: No noticable improvement (in fact, arguably worse performance) switching Nokogiri's `xpath("//p")` to `xpath("//text()")` to extract text.
 * I need to figure out where in the code [textgrounder][tg] extracts items from the database to see if there's allowance made for different formats with more options.
     * For example, does [textgrounder][tg] only recognize "Alaska" and "AK" as valid symbols for that state, or is it also picking up on "Alas."?  It seems like it doesn't recognize the latter.
+        * Update 2011-06-23: Okay, so a perusal of the code suggests that the basic processing of the gazetteer files (the geolocation databases used in the [getting started][gs] guide) happens in the files [GeoNamesGazetteer.java][gng] and [GeoNamesGazetteerWithList.java][gngl].  If I understand correctly, the data categories are hard-coded into [textgrounder][tg]: e.g., [textgrounder][tg] _assumes_ latitude is `fields[4]`, etc.  To make [textgrounder][tg] more robust, it would've been helpful if it instead read the field names from the first line of the file (or a separate file) and then created a hash with those names as keys.  The drawback is that would be much more memory intensive than the appoach they've used of packing into arrays.
 
 [tg]: http://code.google.com/p/textgrounder/ "textgrounder wiki"
 [pg]: http://www.gutenberg.org/wiki/Main_Page "Project Gutenberg homepage"
@@ -67,3 +68,5 @@ Some of the above issues may have more to do with how I prepared the text to be 
 [natgeo]: http://www.nationalgeographic.com/ "National Geographic"
 [gs]: http://code.google.com/p/textgrounder/wiki/GettingStarted "textgrounder Getting Started guide"
 [cl]: http://code.google.com/p/textgrounder/source/browse/src/main/java/opennlp/textgrounder/topo/gaz/CandidateList.java "CandidateList.java"
+[gng]: http://code.google.com/p/textgrounder/source/browse/src/main/java/opennlp/textgrounder/topo/gaz/GeoNamesGazetteer.java "textgrounder file GeoNamesGazetteer.java"
+[gngl]: http://code.google.com/p/textgrounder/source/browse/src/main/java/opennlp/textgrounder/topo/gaz/GeoNamesGazetteerWithList.java "textgrounder file GeoNamesGazetteerWithList.java"
