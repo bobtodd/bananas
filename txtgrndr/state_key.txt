@@ -1,0 +1,9 @@
+AK	Alas
+AZ	Ariz
+CA	Calif
+CO	Colo
+MT	Mont
+NM	N. Mex
+OR	Oreg
+WA	Wash
+WY	Wyo
