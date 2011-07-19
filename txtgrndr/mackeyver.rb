@@ -1,5 +1,18 @@
 #!/usr/bin/env ruby
 
+# This little script is designed to flesh out a gazetteer
+# (geographical data input for textgrounder) by duplicating
+# those entries where the US statename could have an
+# alternate abbreviation.
+
+# E.g., the gazetteer lists Colorado as CO, but some use
+# the abbreviation Colo.  So mackeyver.rb will take
+# the gazetteer as the sourcefile, look at a list of
+# abbreviations in another file (where "CO" is paired
+# with "Colo"), take any line in the sourcefile containing
+# "CO", and duplicate the entire line with "CO" replaced
+# by "Colo".  Inelegant, I know.  But simple.
+
 require 'optparse'
 
 options = {}
@@ -8,7 +21,7 @@ optparse = OptionParser.new do |opts|
   opts.banner = "Usage: mackeyver.rb [OPTIONS] sourcefile"
 
   options[:keyfile] = 'state_key.txt'
-  opts.on('-k', '--key FILE', "File containing state abbrevs.") do |file|
+  opts.on('-k', '--key FILE', "File containing alternate state abbreviations.") do |file|
     options[:keyfile] = file
   end
 
@@ -35,8 +48,9 @@ ofile     = File.open(ofilename, "w")
 
 states = {}
 while (line = kfile.gets) do
-  key, value = line.split("\t")
-  states[key] = value.chomp
+  key, the_rest = line.split("\t")
+  values = the_rest.chomp.split(",")
+  states[key] = values
 end
 
 # read infile line by line
@@ -47,14 +61,19 @@ end
 
 # Issue: MT also stands for Mountain Time... for crying out loud!
 # Need to split line and only take abbrevs after "US"...
+
+splitpoint = "\tUS\t"
+
 while (line = ifile.gets) do
   ofile.puts line
-  firsthalf, secondhalf = line.split("\tUS\t")
+  firsthalf, secondhalf = line.split(splitpoint)
   for key in states.keys
     abbrev = "\t" + key + "\t"
     if secondhalf.match(abbrev)
-      newabbrev = "\t" + states[key] + "\t"
-      ofile.puts firsthalf + "\tUS\t" + secondhalf.gsub(abbrev, newabbrev)
+      for name in states[key]
+        newabbrev = "\t" + name + "\t"
+        ofile.puts firsthalf + splitpoint + secondhalf.gsub(abbrev, newabbrev)
+      end
     end
   end
 end

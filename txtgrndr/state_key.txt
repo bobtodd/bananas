@@ -1,6 +1,6 @@
 AK	Alas
 AZ	Ariz
-CA	Calif
+CA	Calif, Cal
 CO	Colo
 MT	Mont
 NM	N. Mex
