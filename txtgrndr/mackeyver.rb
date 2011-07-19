@@ -50,6 +50,7 @@ states = {}
 while (line = kfile.gets) do
   key, the_rest = line.split("\t")
   values = the_rest.chomp.split(",")
+  # values should be an array of abbreviations
   states[key] = values
 end
 
@@ -67,9 +68,19 @@ splitpoint = "\tUS\t"
 while (line = ifile.gets) do
   ofile.puts line
   firsthalf, secondhalf = line.split(splitpoint)
+
+  # If there's no "splitpoint" encountered, go to next line
+  if !secondhalf
+    next
+  end
+
+  # for each line in gazetter, go through each state in key-file
   for key in states.keys
     abbrev = "\t" + key + "\t"
+    # find the current abbreviation in the gazetteer
     if secondhalf.match(abbrev)
+      # if you find that state
+      # replace it with each associated abbrev and output a duplicate line
       for name in states[key]
         newabbrev = "\t" + name + "\t"
         ofile.puts firsthalf + splitpoint + secondhalf.gsub(abbrev, newabbrev)
