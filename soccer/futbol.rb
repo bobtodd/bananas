@@ -44,6 +44,12 @@ class Tournament
     phases << Phase.new(breakpoints.last, garbage.strip)
     return phases
   end
+  
+  def to_s
+    outstr = ""
+    @phases.each { |ph| outstr += ph.to_s + "\n" }
+    return outstr
+  end
 end
 
 class Phase
@@ -108,6 +114,12 @@ class Phase
     
     return groups
   end
+  
+  def to_s
+    outstr = ""
+    @groups.each { |grp| outstr += grp.to_s + "\n" }
+    return outstr
+  end
 end
 
 class Group
@@ -150,6 +162,12 @@ class Group
     end
     
     return games
+  end
+  
+  def to_s
+    outstr = ""
+    @games.each { |gm| outstr += gm.to_s + "\n" }
+    return outstr
   end
 end
 
@@ -210,12 +228,5 @@ puts "outfilename: #{outfilename}"
 
 wbpg.xpath("//pre").each do |text|
   tourney = Tournament.new(title, text)
-  tourney.phases.each do |ph|
-    puts "Phase: #{ph.name}"
-    ph.groups.each do |grp|
-      grp.games.each do |gm|
-        puts gm.to_s
-      end
-    end
-  end
+  puts tourney.to_s
 end
