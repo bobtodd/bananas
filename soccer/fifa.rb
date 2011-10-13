@@ -73,29 +73,36 @@ class Tourney
   def to_s
     JSON.pretty_generate({
       :title   => @title,
-      :matches => @matches.to_s
+      :matches => @matches.map{ |item| item.to_s}
     })
   end
   
   def to_json
     {
       :title   => @title,
-      :matches => @matches
+      :matches => @matches.to_s
     }.to_json
   end
 end
 
 results = []
-1.upto(10) do |i|
+1.upto(20) do |i|
   results << "http://www.fifa.com/worldcup/archive/edition=#{i}/results/index.html"
-  # for now, just get one page
-  break
 end
+
+ofile = File.open("../tmp/fifa_stats.txt", 'w')
+
+# Store a regex we'll be using a lot...
+in_tags = /<[^>]+>([^<]*)<[^>]+>/
 
 results.each do |result|  
   tables = Nokogiri::HTML(open(result))
   
-  trny = Tourney.new(tables.xpath('//title').to_s.scan(/<[^>]+>([^<]*)<[^>]+>/)[0][0])
+  # trny = Tourney.new(tables.xpath('//title').to_s.scan(/<[^>]+>([^<]*)<[^>]+>/)[0][0])
+  trny = Tourney.new(tables.xpath('//div[@class = " title "]/h1').to_s.scan(in_tags)[0][0])
+  
+  # If you want to check what page you're on, uncomment:
+  puts result
 
   # try '//table[@summary = "Group 1"]' for only Group 1 tables
   
@@ -106,25 +113,43 @@ results.each do |result|
   # for each table...
   tables.xpath('//table[@class = "fixture"]').each do |tbl|
     # get the table title...
-    caption = tbl.xpath('caption').to_s.scan(/<[^>]+>([^<]*)<[^>]+>/)[0][0]
+    caption = tbl.xpath('caption').to_s.scan(in_tags)[0][0]
+    
+    # if you want to check what table you're in, uncomment:
+    puts "\t#{caption}"
     
     tbl.xpath('tbody/tr').each do |tr|
       # then get data for each match (i.e. for each row)
       match = Match.new
       match.source = result
       match.round  = caption
+            
+      mNum            = 'td[@class = "c mNum"]'
+      game            = tr.xpath(mNum + '/a').to_s.scan(in_tags)[0]
+      match.match     = game ? game[0] : tr.xpath(mNum).to_s.scan(in_tags)[0][0]
       
-      match.match     = tr.xpath('td[@class = "c mNum"]').to_s.scan(/<[^>]+>([^<]*)<[^>]+>/)[0][0]
-      match.date      = tr.xpath('td[@class = "l dt"]').to_s.scan(/<[^>]+>([^<]*)<[^>]+>/)[0][0]
-      match.home_team = tr.xpath('td[@class = "l homeTeam"]/a').to_s.scan(/<[^>]+>([^<]*)<[^>]+>/)[0][0]
-      match.results   = tr.xpath('td[@class = "c "]/a').to_s.scan(/<[^>]+>([^<]*)<[^>]+>/)[0][0]
-      match.away_team = tr.xpath('td[@class = "r awayTeam"]/a').to_s.scan(/<[^>]+>([^<]*)<[^>]+>/)[0][0]
+      dt              = 'td[@class = "l dt"]'
+      date            = tr.xpath(dt + '/a').to_s.scan(in_tags)[0]
+      match.date      = date ? date[0] : tr.xpath(dt).to_s.scan(in_tags)[0][0]
+      
+      homeTeam        = 'td[@class = "l homeTeam"]'
+      home            = tr.xpath(homeTeam + '/a').to_s.scan(in_tags)[0]
+      match.home_team = home ? home[0] : tr.xpath(homeTeam).to_s.scan(in_tags)[0][0]
+      
+      empty           = 'td[@class = "c "]'
+      score           = tr.xpath(empty + '/a').to_s.scan(in_tags)[0]
+      match.results   = score ? score[0] : tr.xpath(empty).to_s.scan(in_tags)[0][0]
+      
+      awayTeam        = 'td[@class = "r awayTeam"]'
+      away            = tr.xpath(awayTeam + '/a').to_s.scan(in_tags)[0]
+      match.away_team = away ? away[0] : tr.xpath(awayTeam).to_s.scan(in_tags)[0][0]
       
       # add that to the tourney data
       trny.matches << match
     end
   end
-  
-  puts trny
+
+  ofile.puts trny
 end
 
+ofile.close
