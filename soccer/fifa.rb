@@ -34,12 +34,33 @@ require 'open-uri'
 require 'nokogiri'
 require 'json'
 
+# get_category() looks for the next-higher level
+# HTML-tag that describes the category to which the
+# current table belongs.  E.g. if we have a table
+# of matches, do these belong to the "Results" of
+# a World Cup tournament, or are they, say, UEFA
+# league-level results?  The FIFA websites put in
+# league-level data as <h2>-headers, but it's not
+# consistent.
+def get_category(block, style)
+  unless block.nil?
+    if block.name == style
+      return block
+    else
+      get_category(block.previous, style)
+    end
+  else
+    return false
+  end
+end
+
 class Match
-  attr_accessor :source, :round, :match, :date, :home_team, :results, :away_team
+  attr_accessor :source, :category, :round, :match, :date, :home_team, :results, :away_team
   
   def to_s
     JSON.pretty_generate({
       :source    => @source,
+      :category  => @category,
       :round     => @round,
       :match     => @match,
       :date      => @date,
@@ -52,6 +73,7 @@ class Match
   def to_json
     {
       :source    => @source,
+      :category  => @category,
       :round     => @round,
       :match     => @match,
       :date      => @date,
@@ -85,9 +107,9 @@ class Tourney
   end
 end
 
-results = []
+pagehits = []
 1.upto(20) do |i|
-  results << "http://www.fifa.com/worldcup/archive/edition=#{i}/results/index.html"
+  pagehits << "http://www.fifa.com/worldcup/archive/edition=#{i}/results/index.html"
 end
 
 ofile = File.open("../tmp/fifa_stats.txt", 'w')
@@ -95,14 +117,16 @@ ofile = File.open("../tmp/fifa_stats.txt", 'w')
 # Store a regex we'll be using a lot...
 in_tags = /<[^>]+>([^<]*)<[^>]+>/
 
-results.each do |result|  
-  tables = Nokogiri::HTML(open(result))
+pagehits.each do |hit|  
+  page = Nokogiri::HTML(open(hit))
   
   # trny = Tourney.new(tables.xpath('//title').to_s.scan(/<[^>]+>([^<]*)<[^>]+>/)[0][0])
-  trny = Tourney.new(tables.xpath('//div[@class = " title "]/h1').to_s.scan(in_tags)[0][0])
+  title     = page.xpath('//div[@class = " title "]/h1').to_s.scan(in_tags)[0][0]
+  minititle = page.xpath('//h1[@class = "miniTitle "]').to_s.scan(in_tags)[0][0]
+  trny      = Tourney.new(title)
   
   # If you want to check what page you're on, uncomment:
-  puts result
+  puts hit
 
   # try '//table[@summary = "Group 1"]' for only Group 1 tables
   
@@ -110,19 +134,31 @@ results.each do |result|
   # but tables with raw match data are class="fixture"
   # we just want the raw data (we can generate the stats ourselves)
   
+  fixtures   = page.xpath('//div[@class = "fullpageFixtures"]')
+  categories = fixtures.xpath('h2')
+  puts "\tCategories:"
+  categories.each { |x| puts "\t\t#{x}"}
+  
   # for each table...
-  tables.xpath('//table[@class = "fixture"]').each do |tbl|
+  page.xpath('//table[@class = "fixture"]').each do |tbl|
+    # get the category...
+    has_category = get_category(tbl, 'h2').to_s.scan(in_tags)[0]
+    category     = has_category ? has_category[0] : ''
+    puts "."*20 + "\tCategory: #{category}"
+    
     # get the table title...
-    caption = tbl.xpath('caption').to_s.scan(in_tags)[0][0]
+    has_caption = tbl.xpath('caption').to_s.scan(in_tags)[0]
+    caption     = has_caption ? has_caption[0] : ''
     
     # if you want to check what table you're in, uncomment:
-    puts "\t#{caption}"
+    puts "."*20 + "\tCaption: #{caption}"
     
     tbl.xpath('tbody/tr').each do |tr|
       # then get data for each match (i.e. for each row)
       match = Match.new
-      match.source = result
-      match.round  = caption
+      match.source   = hit
+      match.category = category
+      match.round    = caption
             
       mNum            = 'td[@class = "c mNum"]'
       game            = tr.xpath(mNum + '/a').to_s.scan(in_tags)[0]
