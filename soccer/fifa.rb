@@ -30,6 +30,7 @@
 #   http://www.fifa.com/worldfootball/statisticsandrecords/associations/association=can/worldcup/index.html
 # and change the "association=" to "ger", say, for Germany.
 
+require 'optparse'
 require 'open-uri'
 require 'nokogiri'
 require 'json'
@@ -54,6 +55,9 @@ def get_category(block, style)
   end
 end
 
+# A Match object contains all the data from a given
+# FIFA soccer match.  Think of it as one row in a table,
+# where you can access the columns by name.
 class Match
   attr_accessor :source, :category, :round, :match, :date, :home_team, :results, :away_team
   
@@ -70,7 +74,7 @@ class Match
     })
   end
   
-  def to_json
+  def to_json(*a)
     {
       :source    => @source,
       :category  => @category,
@@ -80,10 +84,13 @@ class Match
       :home_team => @home_team,
       :results   => @results,
       :away_team => @away_team
-    }.to_json
+    }.to_json(*a)
   end
 end
 
+# Tourney is just a glorified Array of all the matches.
+# Each element in the Array is a Match object.  For added
+# pleasure, each Tourney comes with a free title!
 class Tourney
   attr_accessor :title, :matches
 
@@ -95,32 +102,74 @@ class Tourney
   def to_s
     JSON.pretty_generate({
       :title   => @title,
-      :matches => @matches.map{ |item| item.to_s}
+      :matches => @matches.map{ |match| match.to_s}
     })
   end
   
-  def to_json
+  def to_json(*a)
     {
       :title   => @title,
-      :matches => @matches.to_s
-    }.to_json
+      :matches => @matches.map{ |match| match.to_json(*a)}
+    }.to_json(*a)
   end
 end
 
+# Read command-line options
+options = {}
+optparse = OptionParser.new do |opts|
+  opts.banner = "Usage: ./fifa.rb [options]"
+  
+  options[:start] = 1
+  opts.on('-b', '--start N', "Page number to start (begin) scraping data") do |number|
+    options[:start] = number.to_i
+  end
+
+  options[:stop] = 10
+  opts.on('-e', '--stop N', "Page number to stop (end) scraping data") do |number|
+    options[:stop] = number.to_i
+  end
+  
+  options[:outfile] = "../tmp/fifa_stats.json"
+  opts.on('-o', '--out FILE', "Name of JSON output file") do |filename|
+    options[:outfile] = filename
+  end
+  
+  opts.on('-h', '--help', 'Help display') do
+    puts opts
+    exit
+  end
+end
+
+optparse.parse!
+
+# Set start and stop points
+a = options[:start]
+b = options[:stop]
+start, stop = (a < b) ? [a, b] : [b, a]
+
+puts "Good to go..."
+
+# Make a list of the web pages where the target data
+# is stored.
 pagehits = []
-1.upto(20) do |i|
+start.upto(stop) do |i|
   pagehits << "http://www.fifa.com/worldcup/archive/edition=#{i}/results/index.html"
 end
 
-ofile = File.open("../tmp/fifa_stats.txt", 'w')
+puts "Created list of target pages."
+
+# Prepare a file to hold the scraped data.
+ofile = File.open(options[:outfile], 'w')
 
 # Store a regex we'll be using a lot...
 in_tags = /<[^>]+>([^<]*)<[^>]+>/
 
-pagehits.each do |hit|  
+# Now go through each page one by one
+pagehits.each do |hit|
+  # Open the page
   page = Nokogiri::HTML(open(hit))
   
-  # trny = Tourney.new(tables.xpath('//title').to_s.scan(/<[^>]+>([^<]*)<[^>]+>/)[0][0])
+  # Get the page title and the subtitle
   title     = page.xpath('//div[@class = " title "]/h1').to_s.scan(in_tags)[0][0]
   minititle = page.xpath('//h1[@class = "miniTitle "]').to_s.scan(in_tags)[0][0]
   trny      = Tourney.new(title)
@@ -130,31 +179,39 @@ pagehits.each do |hit|
 
   # try '//table[@summary = "Group 1"]' for only Group 1 tables
   
-  # tables with group standings are labeled class="groupsStandig"
-  # but tables with raw match data are class="fixture"
-  # we just want the raw data (we can generate the stats ourselves)
+  # Tables with group standings are labeled class="groupsStandig",
+  # but tables with raw match data are class="fixture".
+  # We just want the raw data (we can generate the stats ourselves)
   
+  # Isolate raw data
   fixtures   = page.xpath('//div[@class = "fullpageFixtures"]')
+  
+  # There are sub-subtitles that precede data tables.
+  # They give things like league titles, e.g. implicitly saying
+  # that "the following tables are for the UEFA matches", etc.
+  # But they only occur in some pages, not in others.  Annoying!
+  # Let's find out what those sub-subtitles are:
   categories = fixtures.xpath('h2')
   puts "\tCategories:"
   categories.each { |x| puts "\t\t#{x}"}
   
-  # for each table...
+  # Now let's actually extract the data from the tables.
+  # For each table...
   page.xpath('//table[@class = "fixture"]').each do |tbl|
-    # get the category...
+    # Get the category...
     has_category = get_category(tbl, 'h2').to_s.scan(in_tags)[0]
     category     = has_category ? has_category[0] : ''
     puts "."*20 + "\tCategory: #{category}"
     
-    # get the table title...
+    # Get the table title (sub-sub-subtitle)...
     has_caption = tbl.xpath('caption').to_s.scan(in_tags)[0]
     caption     = has_caption ? has_caption[0] : ''
     
-    # if you want to check what table you're in, uncomment:
-    puts "."*20 + "\tCaption: #{caption}"
+    # (if you want to check what table you're in, uncomment:)
+    puts "."*20 + "\t Caption: #{caption}"
     
     tbl.xpath('tbody/tr').each do |tr|
-      # then get data for each match (i.e. for each row)
+      # Then get data for each match (i.e. for each row)
       match = Match.new
       match.source   = hit
       match.category = category
@@ -180,12 +237,14 @@ pagehits.each do |hit|
       away            = tr.xpath(awayTeam + '/a').to_s.scan(in_tags)[0]
       match.away_team = away ? away[0] : tr.xpath(awayTeam).to_s.scan(in_tags)[0][0]
       
-      # add that to the tourney data
+      # Add that match to the tourney data
       trny.matches << match
     end
   end
-
+  
+  # Write the data to file
   ofile.puts trny
 end
 
+# Close everything down
 ofile.close
