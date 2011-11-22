@@ -1,4 +1,7 @@
-Installing IMW has been a bit of a trick.  When I do `gem install imw` within RVM, things install fine.  Butthen if I try to `require 'imw'`, I get the following: "LoadError: no such file to load -- imw/utils".
+Installing IMW has been a bit of a trick.  When I do `gem install imw` within RVM, things install fine.  But then if I try to `require 'imw'`, I get the following: "LoadError: no such file to load -- imw/utils".
+
+Pearls from the Master
+----------------------
 
 As Flip points out, a `require` statement magically finds the file you're trying to include, without you having to worry about where you are when you invoke it, or where the file is located.  Since the latest changes to IMW haven't been pushed to the public repo, we need to get Flip's own version and then make sure that Ruby uses that.  First off, we need to do `gem uninstall imw` (and `gem uninstall icss` for good measure) to start with a clean slate.  Then within a script, before the `require` statements, we need to tell Ruby to *unmagically* find the new versions:
 
@@ -14,13 +17,16 @@ Then, in a shell prompt, we do the following to get the correct version of, say,
 
 
 
+The Erratic Path of the Grasshopper
+-----------------------------------
+
 Okay, so I'm trying to figure out the cleanest way to do this.  In particular, I'd like to do what you can do with Python's Pip: use the package manager to install the gem, but just provide a different source location via some option parameter.  A brief search on the web shows that, surprisingly, Python's ahead of Ruby on this: `gem` doesn't seem to have that functionality.  But I did find a [guide for installing a gem from code hosted on Git][gitgem].  Following this guide, my method has looked as follows:
 
 * Create a clean gemset to do all this stuff: `rvm gemset create chimps`;
 * ... and start using it: `rvm gemset use chimps`.
-* Start installing necessary gems: `gem install gemcutter` (`gem tumble` is unnecessary: Gemcutter.org is the default).
+* Start installing necessary gems: `gem install gemcutter` (the `gem tumble` command is unnecessary: Gemcutter.org is the default).
 * `gem install jeweler`.
-* `gem install nokogiri -- --with-xslt-dir=/usr/local/Cellar/libxslt/1.1.26` (the lengthy option due to Nokogiri weirdness, with Homebrew to the rescue... goes down smooth like a mountain stream).
+* Though not strictly necessary for building and installing [ICSS][icss] and [IMW][imw], it's useful to install Nokogiri, since it's used in one of the [ICSS][icss] examples: `gem install nokogiri -- --with-xslt-dir=/usr/local/Cellar/libxslt/1.1.26` (the lengthy option due to Nokogiri weirdness, with Homebrew to the rescue... goes down smooth like a mountain stream).
 * Get [**Flip's** version of IMW][imw], **not** the version in Infochimps' repo: `git clone git://github.com/mrflip/imw.git`.
 * `cd imw/`.
 * `rake -vT` to figure out what tasks you can do (the [guide][gitgem] says to run `rake gem`, but that gives an error; looking at the output of this command, we want `rake install`).
@@ -28,7 +34,7 @@ Okay, so I'm trying to figure out the cleanest way to do this.  In particular, I
 
 That seems to get [IMW][imw] installed, but honestly it doesn't seem to work.
 
-After doing the above procedure, I then installed [ICSS][icss] via `gem install icss` (also in the same `chimps` gemset).  But upon trying to run the example script html_selector.rb, I get the following output.
+After doing the above procedure, I then installed [ICSS][icss] via `gem install icss` (also in the same `chimps` gemset).  But upon trying to run the example script `html_selector.rb` (where is this file now?... I can't find it in the repo... ah, that's because it was in the `example/` subdirectory of either the installed [IMW][imw] or [ICSS][icss] gem in RVM, but I can't find it now), I get the following output.
 
     /Users/bobtodd/.rvm/gems/ruby-1.9.2-p180@chimps/gems/imw-0.1.1/lib/imw/utils/extensions/array.rb:15:in `<class:Array>': uninitialized constant Array::ActiveSupport (NameError)
 	from /Users/bobtodd/.rvm/gems/ruby-1.9.2-p180@chimps/gems/imw-0.1.1/lib/imw/utils/extensions/array.rb:14:in `<top (required)>'
@@ -108,6 +114,10 @@ That gave the following:
      > 
 
 Supposedly it works right.  Let's see.... (slight pause).  Nope.  If I run `irb` and type `require 'imw'`, I get the same error: 'NameError: unitialized constant Array::ActiveSupport'.  No change if I uninstall both [ICSS][icss] and [IMW][imw] and install them in the reverse order (first [ICSS][icss], then [IMW][imw]).
+
+Interestingly, in the gemset `chimps` the command `gem list` shows that I have `activesupport (3.1.3, 3.0.11)`.  If I run `irb` and type `require 'active_support'`, it returns `nil` (this happened even before I ran `gem update activesupport`, when the only version present was `activesupport (3.0.11)`).  But in the global gemset, I have `activesupport (3.0.9)`, and typing `require 'active_support'` in `irb` returns `true`.  I'm not sure why there's the difference in behavior.
+
+Hmmm... what to do....
 
 [gitgem]: http://ruby.about.com/od/advancedruby/a/gitgem.htm "Installing Gems from Git"
 [imw]: https://github.com/mrflip/imw "Infinite Monkeywrench"
