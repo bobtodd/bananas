@@ -121,9 +121,9 @@ Hmmm... what to do....
 
 Well, let's take a look at what I *have* managed to do.  Though nothing works (evidently typical for me), I have managed to *change the error message*.  At the beginning of this journey, Ruby couldn't load `imw/utils`.  That's no longer the case: it seems Ruby can find all the files it needs for [ICSS][icss] and [IMW][imw].  That's good: it suggests that the above method is a nice, clean way to use `gem` together with `git` to install the most recent version of these two packages (as should be the case, according to the [guide][gitgem]).  That means that perhaps I can avoid the *unmagical incantation* from **The Master**, which we'd need to place in the preamble of every script; instead, we should be able to confine all the shenanigans to the gem installation procedure itself.
 
-If I understand the errors messages I'm getting now, then it seems the problem has something to do with [ICSS][icss] or [IMW][imw] not playing well with ActiveSupport.  That might be a versioning issue, and so perhaps the next step is to figure out what specific version of ActiveSupport is required by the Infochimps gems.
+If I understand the error messages I'm getting now, then it seems the problem has something to do with [ICSS][icss] or [IMW][imw] not playing well with ActiveSupport.  That might be a versioning issue, and so perhaps the next step is to figure out what specific version of ActiveSupport is required by the Infochimps gems.
 
 [gitgem]: http://ruby.about.com/od/advancedruby/a/gitgem.htm "Installing Gems from Git"
 [imw]: https://github.com/mrflip/imw "Infinite Monkeywrench"
-[icss]: https://github.com/infochimps/icss.git "Infochimps Stupid Schema"
+[icss]: https://github.com/infochimps/icss "Infochimps Stupid Schema"
 [hselect]: https://github.com/bobtodd/bananas/blob/master/soccer/html_selector.rb "html_selector.rb"
