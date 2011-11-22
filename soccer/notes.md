@@ -16,16 +16,99 @@ Then, in a shell prompt, we do the following to get the correct version of, say,
 
 Okay, so I'm trying to figure out the cleanest way to do this.  In particular, I'd like to do what you can do with Python's Pip: use the package manager to install the gem, but just provide a different source location via some option parameter.  A brief search on the web shows that, surprisingly, Python's ahead of Ruby on this: `gem` doesn't seem to have that functionality.  But I did find a [guide for installing a gem from code hosted on Git][gitgem].  Following this guide, my method has looked as follows:
 
-* `rvm gemset create chimps`
-* `rvm gemset use chimps`
-* `gem install gemcutter` (`gem tumble` is unnecessary: Gemcutter.org is the default)
-* `gem install jeweler`
-* `gem install nokogiri -- --with-xslt-dir=/usr/local/Cellar/libxslt/1.1.26` (the lengthy option due to Nokogiri weirdness, with Homebrew to the rescue)
-* `git clone git://github.com/mrflip/imw.git`
-* `cd imw/`
-* `rake -vT` to figure out what tasks you can do (the [guide][gitgem] says to run `rake gem`, but that gives an error; looking at the output of this command, we want `rake install`)
+* Create a clean gemset to do all this stuff: `rvm gemset create chimps`;
+* ... and start using it: `rvm gemset use chimps`.
+* Start installing necessary gems: `gem install gemcutter` (`gem tumble` is unnecessary: Gemcutter.org is the default).
+* `gem install jeweler`.
+* `gem install nokogiri -- --with-xslt-dir=/usr/local/Cellar/libxslt/1.1.26` (the lengthy option due to Nokogiri weirdness, with Homebrew to the rescue... goes down smooth like a mountain stream).
+* Get [**Flip's** version of IMW][imw], **not** the version in Infochimps' repo: `git clone git://github.com/mrflip/imw.git`.
+* `cd imw/`.
+* `rake -vT` to figure out what tasks you can do (the [guide][gitgem] says to run `rake gem`, but that gives an error; looking at the output of this command, we want `rake install`).
+* Build and install the gem: `rake install`.
 
 That seems to get [IMW][imw] installed, but honestly it doesn't seem to work.
 
+After doing the above procedure, I then installed [ICSS][icss] via `gem install icss` (also in the same `chimps` gemset).  But upon trying to run the example script html_selector.rb, I get the following output.
+
+    /Users/bobtodd/.rvm/gems/ruby-1.9.2-p180@chimps/gems/imw-0.1.1/lib/imw/utils/extensions/array.rb:15:in `<class:Array>': uninitialized constant Array::ActiveSupport (NameError)
+	from /Users/bobtodd/.rvm/gems/ruby-1.9.2-p180@chimps/gems/imw-0.1.1/lib/imw/utils/extensions/array.rb:14:in `<top (required)>'
+	from /Users/bobtodd/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+	from /Users/bobtodd/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+	from /Users/bobtodd/.rvm/gems/ruby-1.9.2-p180@chimps/gems/imw-0.1.1/lib/imw/utils/extensions/core.rb:2:in `<top (required)>'
+	from /Users/bobtodd/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+	from /Users/bobtodd/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+	from /Users/bobtodd/.rvm/gems/ruby-1.9.2-p180@chimps/gems/imw-0.1.1/lib/imw/utils.rb:19:in `<top (required)>'
+	from /Users/bobtodd/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+	from /Users/bobtodd/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+	from /Users/bobtodd/.rvm/gems/ruby-1.9.2-p180@chimps/gems/imw-0.1.1/lib/imw.rb:3:in `<top (required)>'
+	from /Users/bobtodd/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:58:in `require'
+	from /Users/bobtodd/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:58:in `rescue in require'
+	from /Users/bobtodd/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:35:in `require'
+	from ./html_selector.rb:6:in `<main>'
+
+What may be happening is that `gem` installs an older version of [ICSS][icss], similar to the issue with [IMW][imw].  So we'll try following a similar procedure to the one above.
+
+* Get rid of the current version of [ICSS][icss]: `gem uninstall icss`.
+* If you're still in the `imw/` directory, `cd` out of it: `cd ..`.
+* Clone the latest version of [ICSS][icss]: `git clone git://github.com/infochimps/icss.git`.
+* `cd icss/`.
+* Build and install: `rake install`.
+
+The output there was
+
+    Could not find gem 'rcov (>= 0) ruby' in any of the gem sources listed in your Gemfile.
+    Run `bundle install` to install missing gems
+
+So we'll try that:
+
+* `bundle install`.
+
+That gave the following:
+
+     > bundle install
+     Fetching source index for http://rubygems.org/
+     Installing rake (0.9.2.2) 
+     Using activesupport (3.0.11) 
+     Using builder (2.1.2) 
+     Using i18n (0.5.0) 
+     Using activemodel (3.0.11) 
+     Using bundler (1.0.21) 
+     Installing diff-lcs (1.1.3) 
+     Using git (1.2.5) 
+     Using json (1.6.1) 
+     Using gorillib (0.1.7) 
+     Installing jeweler (1.5.2) 
+     Installing rcov (0.9.11) with native extensions 
+     Installing rspec-core (2.3.1) 
+     Installing rspec-expectations (2.3.0) 
+     Installing rspec-mocks (2.3.0) 
+     Installing rspec (2.3.0) 
+     Installing yard (0.6.8) 
+     Your bundle is complete! Use `bundle show [gemname]` to see where a bundled gem is installed.
+     > bundle show icss
+     Could not find gem 'icss' in the current bundle.
+     > bundle show rcov
+     ~/.rvm/gems/ruby-1.9.2-p180@chimps/gems/rcov-0.9.11
+     > rake install
+     WARNING:  description and summary are identical
+       Successfully built RubyGem
+       Name: icss
+       Version: 0.1.3
+       File: icss-0.1.3.gem
+     Executing "ruby -S gem install ./pkg/icss-0.1.3.gem":
+     WARNING: Global access to Rake DSL methods is deprecated.  Please include
+         ...  Rake::DSL into classes and modules which use the Rake DSL methods.
+     WARNING: DSL method Jeweler::Commands::InstallGem#sh called at ~/.rvm/gems/ruby-1.9.2-p180@chimps/gems/jeweler-1.5.2/lib/jeweler/commands/install_gem.rb:14:in `run'
+     ruby -S gem install ./pkg/icss-0.1.3.gem
+     Successfully installed icss-0.1.3
+     1 gem installed
+     Installing ri documentation for icss-0.1.3...
+     Building YARD (yri) index for icss-0.1.3...
+     Installing RDoc documentation for icss-0.1.3...
+     > 
+
+Supposedly it works right.  Let's see.... (slight pause).  Nope.  If I run `irb` and type `require 'imw'`, I get the same error: 'NameError: unitialized constant Array::ActiveSupport'.  No change if I uninstall both [ICSS][icss] and [IMW][imw] and install them in the reverse order (first [ICSS][icss], then [IMW][imw]).
+
 [gitgem]: http://ruby.about.com/od/advancedruby/a/gitgem.htm "Installing Gems from Git"
 [imw]: https://github.com/mrflip/imw "Infinite Monkeywrench"
+[icss]: https://github.com/infochimps/icss.git "Infochimps Stupid Schema"
