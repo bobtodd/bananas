@@ -12,3 +12,20 @@ Then, in a shell prompt, we do the following to get the correct version of, say,
     > cd
     > git checkout flip
 
+
+
+Okay, so I'm trying to figure out the cleanest way to do this.  In particular, I'd like to do what you can do with Python's Pip: use the package manager to install the gem, but just provide a different source location via some option parameter.  A brief search on the web shows that, surprisingly, Python's ahead of Ruby on this: `gem` doesn't seem to have that functionality.  But I did find a [guide for installing a gem from code hosted on Git][gitgem].  Following this guide, my method has looked as follows:
+
+* `rvm gemset create chimps`
+* `rvm gemset use chimps`
+* `gem install gemcutter` (`gem tumble` is unnecessary: Gemcutter.org is the default)
+* `gem install jeweler`
+* `gem install nokogiri -- --with-xslt-dir=/usr/local/Cellar/libxslt/1.1.26` (the lengthy option due to Nokogiri weirdness, with Homebrew to the rescue)
+* `git clone git://github.com/mrflip/imw.git`
+* `cd imw/`
+* `rake -vT` to figure out what tasks you can do (the [guide][gitgem] says to run `rake gem`, but that gives an error; looking at the output of this command, we want `rake install`)
+
+That seems to get [IMW][imw] installed, but honestly it doesn't seem to work.
+
+[gitgem]: http://ruby.about.com/od/advancedruby/a/gitgem.htm "Installing Gems from Git"
+[imw]: https://github.com/mrflip/imw "Infinite Monkeywrench"
