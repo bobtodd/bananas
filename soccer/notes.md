@@ -123,6 +123,46 @@ Well, let's take a look at what I *have* managed to do.  Though nothing works (e
 
 If I understand the error messages I'm getting now, then it seems the problem has something to do with [ICSS][icss] or [IMW][imw] not playing well with ActiveSupport.  That might be a versioning issue, and so perhaps the next step is to figure out what specific version of ActiveSupport is required by the Infochimps gems.
 
+
+From One Tiny Grain of Sand...
+------------------------------
+
+As we return to the peals what have dropped from the gaping maw of **Da Master**, we find a minor snafu.  In particular, we have already done
+
+    cd ~/BtWk/bananas/
+    git clone git://github.com/mrflip/imw
+    git clone git://github.com/infochimps/icss
+
+to clone the necessary versions of [IMW][imw] and [ICSS][icss].  In the file [html_selector.rb][hselect] I've added the lines
+
+    $LOAD_PATH
+    $:.unshift("~/BtWk/bananas/imw/lib")
+    $:.unshift("~/BtWk/bananas/icss/lib")
+
+in order to point ruby to the proper files.  But when I try
+
+    > ./html_selector.rb
+
+the output I receive is the following:
+
+    > ./html_selector.rb 
+    ~/BtWk/bananas/imw/lib/imw/utils/extensions/array.rb:15:in `<class:Array>': uninitialized constant Array::ActiveSupport (NameError)
+	from ~/BtWk/bananas/imw/lib/imw/utils/extensions/array.rb:14:in `<top (required)>'
+	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+	from ~/BtWk/bananas/imw/lib/imw/utils/extensions/core.rb:2:in `<top (required)>'
+	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+	from ~/BtWk/bananas/imw/lib/imw/utils.rb:19:in `<top (required)>'
+	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+	from ~/BtWk/bananas/imw/lib/imw.rb:3:in `<top (required)>'
+	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+	from ./html_selector.rb:10:in `<main>'
+
+Note that this occurs when I use the `global` gemset, not the `chimps` gemset we created earlier.  So Ruby sees no pre-installed [IMW][imw] or [ICSS][icss] gems.
+
 [gitgem]: http://ruby.about.com/od/advancedruby/a/gitgem.htm "Installing Gems from Git"
 [imw]: https://github.com/mrflip/imw "Infinite Monkeywrench"
 [icss]: https://github.com/infochimps/icss "Infochimps Stupid Schema"

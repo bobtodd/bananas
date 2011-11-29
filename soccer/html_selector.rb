@@ -1,5 +1,9 @@
 #!/usr/bin/env ruby
 
+# $LOAD_PATH
+# $:.unshift("~/BtWk/bananas/imw/lib")
+# $:.unshift("~/BtWk/bananas/icss/lib")
+
 #require 'rubygems'
 require 'nokogiri'
 require 'open-uri'
