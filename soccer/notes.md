@@ -127,7 +127,7 @@ If I understand the error messages I'm getting now, then it seems the problem ha
 From One Tiny Grain of Sand...
 ------------------------------
 
-As we return to the peals what have dropped from the gaping maw of **Da Master**, we find a minor snafu.  In particular, we have already done
+As we return to the pearls what have dropped from the gaping maw of **Da Master**, we find a minor snafu.  In particular, we have already done
 
     cd ~/BtWk/bananas/
     git clone git://github.com/mrflip/imw
@@ -139,7 +139,7 @@ to clone the necessary versions of [IMW][imw] and [ICSS][icss].  In the file [ht
     $:.unshift("~/BtWk/bananas/imw/lib")
     $:.unshift("~/BtWk/bananas/icss/lib")
 
-in order to point ruby to the proper files.  But when I try
+in order to point Ruby to the proper files.  But when I try
 
     > ./html_selector.rb
 
@@ -161,7 +161,58 @@ the output I receive is the following:
 	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
 	from ./html_selector.rb:10:in `<main>'
 
-Note that this occurs when I use the `global` gemset, not the `chimps` gemset we created earlier.  So Ruby sees no pre-installed [IMW][imw] or [ICSS][icss] gems.
+Note that this occurs when I use the `global` gemset, not the `chimps` gemset we created earlier.  So Ruby sees no pre-installed [IMW][imw] or [ICSS][icss] gems.  In particular, the gems that are installed are the following:
+
+    > gem list
+    
+    *** LOCAL GEMS ***
+    
+    abstract (1.0.0)
+    actionmailer (3.0.9)
+    actionpack (3.0.9)
+    activemodel (3.0.9)
+    activerecord (3.0.9)
+    activeresource (3.0.9)
+    activesupport (3.0.9)
+    arel (2.0.10)
+    bcrypt-ruby (2.1.4)
+    builder (2.1.2)
+    bundler (1.0.15)
+    cancan (1.6.5)
+    cocaine (0.1.0)
+    configuration (1.3.1)
+    devise (1.4.2)
+    erubis (2.6.6)
+    gemcutter (0.7.0)
+    git (1.2.5)
+    heroku (2.3.6)
+    i18n (0.5.0)
+    jeweler (1.6.4)
+    launchy (0.4.0)
+    mail (2.2.19)
+    meta_search (1.0.6)
+    mime-types (1.16)
+    nokogiri (1.5.0)
+    orm_adapter (0.0.5)
+    paperclip (2.3.15)
+    polyglot (0.3.1)
+    rack (1.2.3)
+    rack-mount (0.6.14)
+    rack-test (0.5.7)
+    rails (3.0.9)
+    railties (3.0.9)
+    rake (0.9.2, 0.8.7)
+    rdoc (3.8)
+    rest-client (1.6.3)
+    sqlite3 (1.3.3)
+    term-ansicolor (1.0.5)
+    thor (0.14.6)
+    treetop (1.4.9)
+    tzinfo (0.3.29)
+    warden (1.0.4)
+    will_paginate (3.0.pre2)
+
+So we can see that we have version 3.0.9 of ActiveSupport.
 
 [gitgem]: http://ruby.about.com/od/advancedruby/a/gitgem.htm "Installing Gems from Git"
 [imw]: https://github.com/mrflip/imw "Infinite Monkeywrench"
