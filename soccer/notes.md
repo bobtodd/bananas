@@ -39,21 +39,23 @@ That seems to get [IMW][imw] installed, but honestly it doesn't seem to work.
 
 After doing the above procedure, I then installed [ICSS][icss] via `gem install icss` (also in the same `chimps` gemset).  But upon trying to run the example script [html_selector.rb][hselect] (where is this file now?... I can't find it in the repo... ah, that's because it was in the `example/` subdirectory of either the installed [IMW][imw] or [ICSS][icss] gem in RVM, but I can't find it now), I get the following output.
 
-    ~/.rvm/gems/ruby-1.9.2-p180@chimps/gems/imw-0.1.1/lib/imw/utils/extensions/array.rb:15:in `<class:Array>': uninitialized constant Array::ActiveSupport (NameError)
-	from ~/.rvm/gems/ruby-1.9.2-p180@chimps/gems/imw-0.1.1/lib/imw/utils/extensions/array.rb:14:in `<top (required)>'
-	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
-	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
-	from ~/.rvm/gems/ruby-1.9.2-p180@chimps/gems/imw-0.1.1/lib/imw/utils/extensions/core.rb:2:in `<top (required)>'
-	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
-	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
-	from ~/.rvm/gems/ruby-1.9.2-p180@chimps/gems/imw-0.1.1/lib/imw/utils.rb:19:in `<top (required)>'
-	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
-	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
-	from ~/.rvm/gems/ruby-1.9.2-p180@chimps/gems/imw-0.1.1/lib/imw.rb:3:in `<top (required)>'
-	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:58:in `require'
-	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:58:in `rescue in require'
-	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:35:in `require'
-	from ./html_selector.rb:6:in `<main>'
+```bash
+~/.rvm/gems/ruby-1.9.2-p180@chimps/gems/imw-0.1.1/lib/imw/utils/extensions/array.rb:15:in `<class:Array>': uninitialized constant Array::ActiveSupport (NameError)
+    from ~/.rvm/gems/ruby-1.9.2-p180@chimps/gems/imw-0.1.1/lib/imw/utils/extensions/array.rb:14:in `<top (required)>'
+    from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+    from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+    from ~/.rvm/gems/ruby-1.9.2-p180@chimps/gems/imw-0.1.1/lib/imw/utils/extensions/core.rb:2:in `<top (required)>'
+    from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+    from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+    from ~/.rvm/gems/ruby-1.9.2-p180@chimps/gems/imw-0.1.1/lib/imw/utils.rb:19:in `<top (required)>'
+    from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+    from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+    from ~/.rvm/gems/ruby-1.9.2-p180@chimps/gems/imw-0.1.1/lib/imw.rb:3:in `<top (required)>'
+    from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:58:in `require'
+    from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:58:in `rescue in require'
+    from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:35:in `require'
+    from ./html_selector.rb:6:in `<main>'
+```
 
 What may be happening is that `gem` installs an older version of [ICSS][icss], similar to the issue with [IMW][imw].  So we'll try following a similar procedure to the one above.
 
@@ -65,8 +67,10 @@ What may be happening is that `gem` installs an older version of [ICSS][icss], s
 
 The output there was
 
-    Could not find gem 'rcov (>= 0) ruby' in any of the gem sources listed in your Gemfile.
-    Run `bundle install` to install missing gems
+```bash
+Could not find gem 'rcov (>= 0) ruby' in any of the gem sources listed in your Gemfile.
+Run `bundle install` to install missing gems
+```
 
 So we'll try that:
 
@@ -74,47 +78,49 @@ So we'll try that:
 
 That gave the following:
 
-     > bundle install
-     Fetching source index for http://rubygems.org/
-     Installing rake (0.9.2.2) 
-     Using activesupport (3.0.11) 
-     Using builder (2.1.2) 
-     Using i18n (0.5.0) 
-     Using activemodel (3.0.11) 
-     Using bundler (1.0.21) 
-     Installing diff-lcs (1.1.3) 
-     Using git (1.2.5) 
-     Using json (1.6.1) 
-     Using gorillib (0.1.7) 
-     Installing jeweler (1.5.2) 
-     Installing rcov (0.9.11) with native extensions 
-     Installing rspec-core (2.3.1) 
-     Installing rspec-expectations (2.3.0) 
-     Installing rspec-mocks (2.3.0) 
-     Installing rspec (2.3.0) 
-     Installing yard (0.6.8) 
-     Your bundle is complete! Use `bundle show [gemname]` to see where a bundled gem is installed.
-     > bundle show icss
-     Could not find gem 'icss' in the current bundle.
-     > bundle show rcov
-     ~/.rvm/gems/ruby-1.9.2-p180@chimps/gems/rcov-0.9.11
-     > rake install
-     WARNING:  description and summary are identical
-       Successfully built RubyGem
-       Name: icss
-       Version: 0.1.3
-       File: icss-0.1.3.gem
-     Executing "ruby -S gem install ./pkg/icss-0.1.3.gem":
-     WARNING: Global access to Rake DSL methods is deprecated.  Please include
-         ...  Rake::DSL into classes and modules which use the Rake DSL methods.
-     WARNING: DSL method Jeweler::Commands::InstallGem#sh called at ~/.rvm/gems/ruby-1.9.2-p180@chimps/gems/jeweler-1.5.2/lib/jeweler/commands/install_gem.rb:14:in `run'
-     ruby -S gem install ./pkg/icss-0.1.3.gem
-     Successfully installed icss-0.1.3
-     1 gem installed
-     Installing ri documentation for icss-0.1.3...
-     Building YARD (yri) index for icss-0.1.3...
-     Installing RDoc documentation for icss-0.1.3...
-     > 
+```bash
+> bundle install
+Fetching source index for http://rubygems.org/
+Installing rake (0.9.2.2) 
+Using activesupport (3.0.11) 
+Using builder (2.1.2) 
+Using i18n (0.5.0) 
+Using activemodel (3.0.11) 
+Using bundler (1.0.21) 
+Installing diff-lcs (1.1.3) 
+Using git (1.2.5) 
+Using json (1.6.1) 
+Using gorillib (0.1.7) 
+Installing jeweler (1.5.2) 
+Installing rcov (0.9.11) with native extensions 
+Installing rspec-core (2.3.1) 
+Installing rspec-expectations (2.3.0) 
+Installing rspec-mocks (2.3.0) 
+Installing rspec (2.3.0) 
+Installing yard (0.6.8) 
+Your bundle is complete! Use `bundle show [gemname]` to see where a bundled gem is installed.
+> bundle show icss
+Could not find gem 'icss' in the current bundle.
+> bundle show rcov
+~/.rvm/gems/ruby-1.9.2-p180@chimps/gems/rcov-0.9.11
+> rake install
+WARNING:  description and summary are identical
+  Successfully built RubyGem
+  Name: icss
+  Version: 0.1.3
+  File: icss-0.1.3.gem
+Executing "ruby -S gem install ./pkg/icss-0.1.3.gem":
+WARNING: Global access to Rake DSL methods is deprecated.  Please include
+    ...  Rake::DSL into classes and modules which use the Rake DSL methods.
+WARNING: DSL method Jeweler::Commands::InstallGem#sh called at ~/.rvm/gems/ruby-1.9.2-p180@chimps/gems/jeweler-1.5.2/lib/jeweler/commands/install_gem.rb:14:in `run'
+ruby -S gem install ./pkg/icss-0.1.3.gem
+Successfully installed icss-0.1.3
+1 gem installed
+Installing ri documentation for icss-0.1.3...
+Building YARD (yri) index for icss-0.1.3...
+Installing RDoc documentation for icss-0.1.3...
+> 
+```
 
 Supposedly it works right.  Let's see.... (slight pause).  Nope.  If I run `irb` and type `require 'imw'`, I get the same error: 'NameError: unitialized constant Array::ActiveSupport'.  No change if I uninstall both [ICSS][icss] and [IMW][imw] and install them in the reverse order (first [ICSS][icss], then [IMW][imw]).
 
@@ -132,9 +138,11 @@ From One Tiny Grain of Sand...
 
 As we return to the pearls what have dropped from the gaping maw of **Da Master**, we find a minor snafu.  In particular, we have already done
 
-    cd ~/BtWk/bananas/
-    git clone git://github.com/mrflip/imw
-    git clone git://github.com/infochimps/icss
+```bash
+cd ~/BtWk/bananas/
+git clone git://github.com/mrflip/imw
+git clone git://github.com/infochimps/icss
+```
 
 to clone the necessary versions of [IMW][imw] and [ICSS][icss].  In the file [html_selector.rb][hselect] I've added the lines
 
@@ -146,76 +154,82 @@ $:.unshift("~/BtWk/bananas/icss/lib")
 
 in order to point Ruby to the proper files.  But when I try
 
-    > ./html_selector.rb
+```bash
+> ./html_selector.rb
+```
 
 the output I receive is the following:
 
-    > ./html_selector.rb 
-    ~/BtWk/bananas/imw/lib/imw/utils/extensions/array.rb:15:in `<class:Array>': uninitialized constant Array::ActiveSupport (NameError)
-	from ~/BtWk/bananas/imw/lib/imw/utils/extensions/array.rb:14:in `<top (required)>'
-	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
-	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
-	from ~/BtWk/bananas/imw/lib/imw/utils/extensions/core.rb:2:in `<top (required)>'
-	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
-	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
-	from ~/BtWk/bananas/imw/lib/imw/utils.rb:19:in `<top (required)>'
-	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
-	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
-	from ~/BtWk/bananas/imw/lib/imw.rb:3:in `<top (required)>'
-	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
-	from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
-	from ./html_selector.rb:10:in `<main>'
+```bash
+> ./html_selector.rb 
+~/BtWk/bananas/imw/lib/imw/utils/extensions/array.rb:15:in `<class:Array>': uninitialized constant Array::ActiveSupport (NameError)
+    from ~/BtWk/bananas/imw/lib/imw/utils/extensions/array.rb:14:in `<top (required)>'
+    from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+    from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+    from ~/BtWk/bananas/imw/lib/imw/utils/extensions/core.rb:2:in `<top (required)>'
+    from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+    from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+    from ~/BtWk/bananas/imw/lib/imw/utils.rb:19:in `<top (required)>'
+    from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+    from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+    from ~/BtWk/bananas/imw/lib/imw.rb:3:in `<top (required)>'
+    from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+    from ~/.rvm/rubies/ruby-1.9.2-p180/lib/ruby/site_ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+    from ./html_selector.rb:10:in `<main>'
+```
 
 Note that this occurs when I use the `global` gemset, not the `chimps` gemset we created earlier.  So Ruby sees no pre-installed [IMW][imw] or [ICSS][icss] gems.  In particular, the gems that are installed are the following:
 
-    > gem list
-    
-    *** LOCAL GEMS ***
-    
-    abstract (1.0.0)
-    actionmailer (3.0.9)
-    actionpack (3.0.9)
-    activemodel (3.0.9)
-    activerecord (3.0.9)
-    activeresource (3.0.9)
-    activesupport (3.0.9)
-    arel (2.0.10)
-    bcrypt-ruby (2.1.4)
-    builder (2.1.2)
-    bundler (1.0.15)
-    cancan (1.6.5)
-    cocaine (0.1.0)
-    configuration (1.3.1)
-    devise (1.4.2)
-    erubis (2.6.6)
-    gemcutter (0.7.0)
-    git (1.2.5)
-    heroku (2.3.6)
-    i18n (0.5.0)
-    jeweler (1.6.4)
-    launchy (0.4.0)
-    mail (2.2.19)
-    meta_search (1.0.6)
-    mime-types (1.16)
-    nokogiri (1.5.0)
-    orm_adapter (0.0.5)
-    paperclip (2.3.15)
-    polyglot (0.3.1)
-    rack (1.2.3)
-    rack-mount (0.6.14)
-    rack-test (0.5.7)
-    rails (3.0.9)
-    railties (3.0.9)
-    rake (0.9.2, 0.8.7)
-    rdoc (3.8)
-    rest-client (1.6.3)
-    sqlite3 (1.3.3)
-    term-ansicolor (1.0.5)
-    thor (0.14.6)
-    treetop (1.4.9)
-    tzinfo (0.3.29)
-    warden (1.0.4)
-    will_paginate (3.0.pre2)
+```bash
+> gem list
+
+*** LOCAL GEMS ***
+
+abstract (1.0.0)
+actionmailer (3.0.9)
+actionpack (3.0.9)
+activemodel (3.0.9)
+activerecord (3.0.9)
+activeresource (3.0.9)
+activesupport (3.0.9)
+arel (2.0.10)
+bcrypt-ruby (2.1.4)
+builder (2.1.2)
+bundler (1.0.15)
+cancan (1.6.5)
+cocaine (0.1.0)
+configuration (1.3.1)
+devise (1.4.2)
+erubis (2.6.6)
+gemcutter (0.7.0)
+git (1.2.5)
+heroku (2.3.6)
+i18n (0.5.0)
+jeweler (1.6.4)
+launchy (0.4.0)
+mail (2.2.19)
+meta_search (1.0.6)
+mime-types (1.16)
+nokogiri (1.5.0)
+orm_adapter (0.0.5)
+paperclip (2.3.15)
+polyglot (0.3.1)
+rack (1.2.3)
+rack-mount (0.6.14)
+rack-test (0.5.7)
+rails (3.0.9)
+railties (3.0.9)
+rake (0.9.2, 0.8.7)
+rdoc (3.8)
+rest-client (1.6.3)
+sqlite3 (1.3.3)
+term-ansicolor (1.0.5)
+thor (0.14.6)
+treetop (1.4.9)
+tzinfo (0.3.29)
+warden (1.0.4)
+will_paginate (3.0.pre2)
+```
 
 So we can see that we have version 3.0.9 of ActiveSupport.
 
@@ -240,7 +254,7 @@ class Array #:nodoc:
 end
 ```
 
-In particular, the problem is in line 15.  Namely, Ruby can't find `Array::ActiveSupport`.
+In particular, the problem is in line 15.  Namely, Ruby can't find `Array::ActiveSupport` in the line `include ActiveSupport::CoreExtensions::Array::ExtractOptions`.
 
 [gitgem]: http://ruby.about.com/od/advancedruby/a/gitgem.htm "Installing Gems from Git"
 [imw]: https://github.com/mrflip/imw "Infinite Monkeywrench"
