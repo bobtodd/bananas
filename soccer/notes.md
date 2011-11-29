@@ -5,9 +5,11 @@ Pearls from the Master
 
 As Flip points out, a `require` statement magically finds the file you're trying to include, without you having to worry about where you are when you invoke it, or where the file is located.  Since the latest changes to IMW haven't been pushed to the public repo, we need to get Flip's own version and then make sure that Ruby uses that.  First off, we need to do `gem uninstall imw` (and `gem uninstall icss` for good measure) to start with a clean slate.  Then within a script, before the `require` statements, we need to tell Ruby to *unmagically* find the new versions:
 
-    $LOAD_PATH
-    $:.unshift("path/to/imw/lib")
-    $:.unshift("path/to/icss/lib")
+```ruby
+$LOAD_PATH
+$:.unshift("path/to/imw/lib")
+$:.unshift("path/to/icss/lib")
+```
 
 Then, in a shell prompt, we do the following to get the correct version of, say, ICSS:
 
@@ -135,9 +137,11 @@ As we return to the pearls what have dropped from the gaping maw of **Da Master*
 
 to clone the necessary versions of [IMW][imw] and [ICSS][icss].  In the file [html_selector.rb][hselect] I've added the lines
 
-    $LOAD_PATH
-    $:.unshift("~/BtWk/bananas/imw/lib")
-    $:.unshift("~/BtWk/bananas/icss/lib")
+```ruby
+$LOAD_PATH
+$:.unshift("~/BtWk/bananas/imw/lib")
+$:.unshift("~/BtWk/bananas/icss/lib")
+```
 
 in order to point Ruby to the proper files.  But when I try
 
@@ -216,22 +220,24 @@ So we can see that we have version 3.0.9 of ActiveSupport.
 
 A hunting we must go, it appears.  The offending code seems to be in the file [array.rb][array] of [IMW][imw].  Here's the necessary snippet:
 
-    #
-    # h2. lib/imw/utils/extensions/array.rb -- array extensions
-    #
-    # == About
-    #
-    # Extensions to the +Array+ class.
-    #
-    # Author::    (Philip flip Kromer, Dhruv Bansal) for Infinite Monkeywrench Project (mailto:coders@infochimps.org)
-    # Copyright:: Copyright (c) 2008 infochimps.org
-    # License::   GPL 3.0
-    # Website::   http://infinitemonkeywrench.org/
-    #
-    require 'active_support/core_ext/array/extract_options'
-    class Array #:nodoc:
-      include ActiveSupport::CoreExtensions::Array::ExtractOptions
-    end
+```ruby
+#
+# h2. lib/imw/utils/extensions/array.rb -- array extensions
+#
+# == About
+#
+# Extensions to the +Array+ class.
+#
+# Author::    (Philip flip Kromer, Dhruv Bansal) for Infinite Monkeywrench Project (mailto:coders@infochimps.org)
+# Copyright:: Copyright (c) 2008 infochimps.org
+# License::   GPL 3.0
+# Website::   http://infinitemonkeywrench.org/
+#
+require 'active_support/core_ext/array/extract_options'
+class Array #:nodoc:
+  include ActiveSupport::CoreExtensions::Array::ExtractOptions
+end
+```
 
 In particular, the problem is in line 15.  Namely, Ruby can't find `Array::ActiveSupport`.
 
