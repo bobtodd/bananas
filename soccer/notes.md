@@ -214,7 +214,29 @@ Note that this occurs when I use the `global` gemset, not the `chimps` gemset we
 
 So we can see that we have version 3.0.9 of ActiveSupport.
 
+A hunting we must go, it appears.  The offending code seems to be in the file [array.rb][array] of [IMW][imw].  Here's the necessary snippet:
+
+    #
+    # h2. lib/imw/utils/extensions/array.rb -- array extensions
+    #
+    # == About
+    #
+    # Extensions to the +Array+ class.
+    #
+    # Author::    (Philip flip Kromer, Dhruv Bansal) for Infinite Monkeywrench Project (mailto:coders@infochimps.org)
+    # Copyright:: Copyright (c) 2008 infochimps.org
+    # License::   GPL 3.0
+    # Website::   http://infinitemonkeywrench.org/
+    #
+    require 'active_support/core_ext/array/extract_options'
+    class Array #:nodoc:
+      include ActiveSupport::CoreExtensions::Array::ExtractOptions
+    end
+
+In particular, the problem is in line 15.  Namely, Ruby can't find `Array::ActiveSupport`.
+
 [gitgem]: http://ruby.about.com/od/advancedruby/a/gitgem.htm "Installing Gems from Git"
 [imw]: https://github.com/mrflip/imw "Infinite Monkeywrench"
 [icss]: https://github.com/infochimps/icss "Infochimps Stupid Schema"
 [hselect]: https://github.com/bobtodd/bananas/blob/master/soccer/html_selector.rb "html_selector.rb"
+[array]: https://github.com/mrflip/imw/blob/master/lib/imw/utils/extensions/array.rb "array.rb"
