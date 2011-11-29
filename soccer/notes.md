@@ -13,10 +13,11 @@ $:.unshift("path/to/icss/lib")
 
 Then, in a shell prompt, we do the following to get the correct version of, say, ICSS:
 
-    > git clone(icss)
-    > cd
-    > git checkout flip
-
+```bash
+> git clone(icss)
+> cd
+> git checkout flip
+```
 
 
 The Erratic Path of the Grasshopper
