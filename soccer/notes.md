@@ -271,7 +271,9 @@ This last part is in fact a very important step in the process.  It cannot be av
 
 As a side note, evidently the rationale behid this is that, as changes are made to core utilities like [ICSS][icss], etc., those changes will obviously have consequences in other tools down the utility chain.  That could potentially have dire consequences and bring everything crashing down.  To avoid that, changes are created on a separate branch, and at the moment `flip` is the only branch implementing the functionality that I need.  Duly noted.
 
-Moreover, to see what branches are available in a repository, run the command `git branch -a`.  The `-a` option shows branches created by others.
+Moreover, to see what branches are available in a repository, run the command `git branch -a`.  The `-a` option shows branches created by others.  [This thread][clone] contains a nice summary of how to check under the hood of a cloned repository and find what branches lurk below.
+
+Note from Dhruv, henceforth **El Maestro**: to clone all remote branches, I should use `git fetch`.  Pearls just fallin' from the sky today.  [This blog post][fetch] provides a nice overview distinguishing, e.g., `git fetch` from `git pull`.
 
 
 [gitgem]: http://ruby.about.com/od/advancedruby/a/gitgem.htm "Installing Gems from Git"
@@ -279,3 +281,5 @@ Moreover, to see what branches are available in a repository, run the command `g
 [icss]: https://github.com/infochimps/icss "Infochimps Stupid Schema"
 [hselect]: https://github.com/bobtodd/bananas/blob/master/soccer/html_selector.rb "html_selector.rb"
 [array]: https://github.com/mrflip/imw/blob/master/lib/imw/utils/extensions/array.rb "array.rb"
+[clone]: http://stackoverflow.com/questions/67699/how-do-i-clone-all-remote-branches-with-git "How do I clone all remote branches with git?"
+[fetch]: http://blog.mikepearce.net/2010/05/18/the-difference-between-git-pull-git-fetch-and-git-clone-and-git-rebase/ "The difference between git pull, git fetch and git clone"
