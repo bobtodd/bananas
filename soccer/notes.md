@@ -275,6 +275,22 @@ Moreover, to see what branches are available in a repository, run the command `g
 
 Note from Dhruv, henceforth **El Maestro**: to clone all remote branches, I should use `git fetch`.  Pearls just fallin' from the sky today.  [This blog post][fetch] provides a nice overview distinguishing, e.g., `git fetch` from `git pull`.
 
+Okay, so now we have two possible tacks we can take.  The first is: repeat the process above, trying to redo the process of installing the gems, but this time making sure to checkout the proper branch (specifically of [ICSS][icss]; [IMW][imw] doesn't have a `flip` branch... presumably because it's been downloaded specifically from his repository).  The procedure is as follows:
+
+* make sure you're using our `chimps` gemset by typing `rvm gemset name`; if not, type `rvm gemset use chimps`;
+* remove the verion of these gems we've already installed: `gem uninstall imw` and `gem uninstall icss`;
+* `cd` into the directory `imw/` and run the command `git pull` to pull down and merge all changes on the remote master; that way we have the most up-to-date version of the repo;
+* run `git branch -a` to check what branches are available; there's no `flip` branch here, so no worries;
+* run `rake install` to install the gem (or, if there are missing dependencies, run `bundle install`, and when that finishes, go ahead and run `rake install` again);
+* `cd` into the directory `icss/` and run `git pull`;
+* run `git branch -a` to list all the branches;
+* run `git checkout remotes/origin/flip` to checkout **Da Master's** branch;
+* and then run `rake install` (or `bundle install`, then `rake install`, if prompted).
+
+That should, in theory, install the correct version of the gems.  We can then open the Ruby interpreter and type `require 'imw'` and/or `require 'icss'` to see what happens.  I'll cut to the chase: nothing good.  I get all the same error messages.
+
+The second possible procedure is to just update the directories `imw/` and `icss/`, but not install them as gems.  Rather, after remembering to do `git checkout remotes/origin/flip` in the `icss/` directory, we simply use **Da Master's** magical incantation in whatever file we want to use, e.g. [html_selector.rb][hselect].  To make a long story short: garbage.  The same errors.  Even if we make sure to remove the gems, so that the `require` statements can't get confused as to where to look.  Drat... and double drat... .
+
 
 [gitgem]: http://ruby.about.com/od/advancedruby/a/gitgem.htm "Installing Gems from Git"
 [imw]: https://github.com/mrflip/imw "Infinite Monkeywrench"
