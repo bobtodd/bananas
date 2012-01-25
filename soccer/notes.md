@@ -263,13 +263,13 @@ Yu Long-Long Man, Yu!
 **Da Master** informs me that my magic incantation is a few eyes-of-newt short of a full potion.  I *must* do the following:
 
 ```bash
-> cd path/to/icss
+> cd path/to/imw
 > git checkout flip
 ```
 
 This last part is in fact a very important step in the process.  It cannot be avoided.  Resistance is futile.
 
-As a side note, evidently the rationale behid this is that, as changes are made to core utilities like [ICSS][icss], etc., those changes will obviously have consequences in other tools down the utility chain.  That could potentially have dire consequences and bring everything crashing down.  To avoid that, changes are created on a separate branch, and at the moment `flip` is the only branch implementing the functionality that I need.  Duly noted.
+As a side note, evidently the rationale behid this is that, as changes are made to core utilities like [IMW][imw], etc., those changes will obviously have consequences in other tools down the utility chain.  That could potentially have dire consequences and bring everything crashing down.  To avoid that, changes are created on a separate branch, and at the moment `flip` is the only branch implementing the functionality that I need.  Duly noted.
 
 
 [gitgem]: http://ruby.about.com/od/advancedruby/a/gitgem.htm "Installing Gems from Git"
