@@ -176,8 +176,6 @@ pagehits.each do |hit|
   
   # If you want to check what page you're on, uncomment:
   puts hit
-
-  # try '//table[@summary = "Group 1"]' for only Group 1 tables
   
   # Tables with group standings are labeled class="groupsStandig",
   # but tables with raw match data are class="fixture".
@@ -210,8 +208,9 @@ pagehits.each do |hit|
     # (if you want to check what table you're in, uncomment:)
     puts "."*20 + "\t Caption: #{caption}"
     
+    # Go through the table row by row
     tbl.xpath('tbody/tr').each do |tr|
-      # Then get data for each match (i.e. for each row)
+      # Get data for each match (i.e. for each row)
       match = Match.new
       match.source   = hit
       match.category = category
@@ -242,7 +241,7 @@ pagehits.each do |hit|
     end
   end
   
-  # Write the data to file
+  # Write the tournament data to file
   ofile.puts trny
 end
 

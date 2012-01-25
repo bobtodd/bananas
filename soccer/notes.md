@@ -139,9 +139,9 @@ From One Tiny Grain of Sand...
 As we return to the pearls what have dropped from the gaping maw of **Da Master**, we find a minor snafu.  In particular, we have already done
 
 ```bash
-cd ~/BtWk/bananas/
-git clone git://github.com/mrflip/imw
-git clone git://github.com/infochimps/icss
+> cd ~/BtWk/bananas/
+> git clone git://github.com/mrflip/imw
+> git clone git://github.com/infochimps/icss
 ```
 
 to clone the necessary versions of [IMW][imw] and [ICSS][icss].  In the file [html_selector.rb][hselect] I've added the lines
@@ -255,6 +255,22 @@ end
 ```
 
 In particular, the problem is in line 15.  Namely, Ruby can't find `Array::ActiveSupport` in the line `include ActiveSupport::CoreExtensions::Array::ExtractOptions`.
+
+
+Yu Long-Long Man, Yu!
+---------------------
+
+**Da Master** informs me that my magic incantation is a few eyes-of-newt short of a full potion.  I *must* do the following:
+
+```bash
+> cd path/to/icss
+> git checkout flip
+```
+
+This last part is in fact a very important step in the process.  It cannot be avoided.  Resistance is futile.
+
+As a side note, evidently the rationale behid this is that, as changes are made to core utilities like [ICSS][icss], etc., those changes will obviously have consequences in other tools down the utility chain.  That could potentially have dire consequences and bring everything crashing down.  To avoid that, changes are created on a separate branch, and at the moment `flip` is the only branch implementing the functionality that I need.  Duly noted.
+
 
 [gitgem]: http://ruby.about.com/od/advancedruby/a/gitgem.htm "Installing Gems from Git"
 [imw]: https://github.com/mrflip/imw "Infinite Monkeywrench"
